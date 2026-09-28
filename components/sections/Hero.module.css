@@ -1,0 +1,229 @@
+.hero {
+  padding-block: clamp(4.5rem, 10vw, 8.5rem) clamp(4rem, 8vw, 7rem);
+}
+
+.content {
+  max-width: 46rem;
+}
+
+.introduction {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.18em 0.27em;
+  margin: 0;
+  color: var(--color-text);
+  font-size: clamp(2.25rem, 4.2vw, 3.25rem);
+  font-weight: 550;
+  line-height: 1.2;
+  letter-spacing: -0.055em;
+}
+
+.identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.27em;
+  white-space: nowrap;
+}
+
+.portrait {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  border-radius: 0.28em;
+  transform: rotate(-4deg);
+  transition: transform var(--duration-interaction) var(--ease-out);
+}
+
+.portraitDark {
+  display: none;
+}
+
+:global(:root[data-theme="dark"]) .portraitLight {
+  display: none;
+}
+
+:global(:root[data-theme="dark"]) .portraitDark {
+  display: block;
+}
+
+.period {
+  color: var(--color-accent);
+}
+
+.roles {
+  max-width: 42rem;
+  margin: 1.75rem 0 0;
+  color: var(--color-text);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 450;
+  line-height: 1.5;
+  letter-spacing: -0.025em;
+}
+
+.role,
+.tool {
+  white-space: nowrap;
+}
+
+.roleLetter {
+  display: inline-block;
+}
+
+.description,
+.technology,
+.contact {
+  color: var(--color-muted);
+  font-size: clamp(1rem, 1.35vw, 1.125rem);
+  line-height: 1.8;
+}
+
+.description {
+  max-width: 41rem;
+  margin: 1.5rem 0 0;
+}
+
+.technology {
+  max-width: 40rem;
+  margin: 1.125rem 0 0;
+}
+
+.tool {
+  color: var(--color-text);
+}
+
+.contact {
+  margin-top: 1.75rem;
+}
+
+.contact p {
+  margin: 0;
+}
+
+.contact .location {
+  margin-top: 0.125rem;
+  font-size: 0.9375rem;
+}
+
+.contactLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  min-height: 44px;
+  color: var(--color-text);
+  text-decoration-line: underline;
+  text-decoration-color: var(--color-border);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: color var(--duration-interaction) var(--ease-out),
+    text-decoration-color var(--duration-interaction) var(--ease-out);
+}
+
+.contactLink {
+  min-height: 0;
+  font-weight: 500;
+  color: var(--color-accent);
+  text-decoration-color: currentColor;
+}
+
+.arrow {
+  font-size: 0.85em;
+  transition: transform var(--duration-interaction) var(--ease-out);
+}
+
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.contactLink:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 5px;
+  border-radius: 2px;
+}
+
+@media (hover: hover) {
+  .portrait:hover {
+    transform: rotate(0deg) scale(1.04);
+  }
+
+  .contactLink:hover {
+    color: var(--color-accent);
+    text-decoration-color: currentColor;
+  }
+
+  .contactLink:hover .arrow {
+    transform: translate(2px, -2px);
+  }
+}
+
+@media (max-width: 600px) {
+  .portrait {
+    width: 44px;
+    height: 44px;
+  }
+
+  .roles {
+    max-width: 29rem;
+    margin-top: 1.5rem;
+  }
+
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .enter {
+    animation: arrive 420ms var(--ease-out) both;
+  }
+
+  .roleSwitcher {
+    filter: blur(0);
+    opacity: 1;
+    transition: opacity 320ms ease, filter 320ms ease;
+  }
+
+  .roleSwitcher[data-visible="false"] {
+    filter: blur(7px);
+    opacity: 0;
+  }
+
+  .roleLetter {
+    animation: roleLetterReveal 420ms var(--ease-out) both;
+  }
+
+  .roles { animation-delay: 45ms; }
+  .description { animation-delay: 90ms; }
+  .technology { animation-delay: 135ms; }
+  .contact { animation-delay: 180ms; }
+  .socials { animation-delay: 225ms; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait,
+  .contactLink,
+  .arrow {
+    transition: none;
+  }
+
+  .portrait:hover,
+  .contactLink:hover .arrow {
+    transform: none;
+  }
+}
+
+@keyframes arrive {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes roleLetterReveal {
+  from { opacity: 0; transform: translateY(0.55em); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
