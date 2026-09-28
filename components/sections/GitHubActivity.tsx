@@ -6,7 +6,6 @@ import { contributionsUrl, github, parseContributions, type ContributionDay } fr
 import styles from "./GitHubActivity.module.css";
 
 const dayFormat = new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
-const monthFormat = new Intl.DateTimeFormat("en", { month: "short", timeZone: "UTC" });
 const dateOf = (day: ContributionDay) => new Date(`${day.date}T00:00:00Z`);
 const describe = (day: ContributionDay) => `${day.count.toLocaleString("en")} contribution${day.count === 1 ? "" : "s"} on ${dayFormat.format(dateOf(day))}`;
 
@@ -17,15 +16,6 @@ function Calendar({ days }: { days: ContributionDay[] }) {
   const [selected, setSelected] = useState<number | null>(null);
   const offset = dateOf(days[0]).getUTCDay();
   const weeks = Math.ceil((offset + days.length) / 7);
-  const months: { column: number; label: string }[] = [];
-  days.forEach((day, index) => {
-    const date = dateOf(day);
-    const column = Math.floor((index + offset) / 7) + 1;
-    if ((index === 0 || date.getUTCDate() === 1) && column < weeks - 1) {
-      if (months.length && column - months.at(-1)!.column < 3) months.pop();
-      months.push({ column, label: monthFormat.format(date) });
-    }
-  });
 
   useEffect(() => {
     const element = scrollRef.current;
@@ -52,32 +42,21 @@ function Calendar({ days }: { days: ContributionDay[] }) {
       <div className={styles.scroll} ref={scrollRef}>
         <div className={styles.calendar} style={{ "--weeks": weeks } as CSSProperties}
           role="group" aria-label="Daily GitHub contributions. Use arrow keys to explore, Home for the first day, and End for the latest day.">
-          <div className={styles.months} aria-hidden="true">
-            {months.map(({ column, label }) => <span key={column} style={{ gridColumn: column }}>{label}</span>)}
-          </div>
-          <div className={styles.weekdays} aria-hidden="true"><span>Mon</span><span>Wed</span><span>Fri</span></div>
-          <div className={styles.days} onMouseLeave={() => setSelected(null)}>
-            {days.map((day, index) => (
-              <button key={day.date} ref={(element) => { buttons.current[index] = element; }}
-                type="button" className={styles.day} data-level={day.level}
-                style={{ gridColumn: Math.floor((index + offset) / 7) + 1, gridRow: (index + offset) % 7 + 1 }}
-                tabIndex={focused === index ? 0 : -1} aria-label={describe(day)} title={describe(day)}
-                onMouseEnter={() => setSelected(index)} onFocus={() => { setFocused(index); setSelected(index); }}
-                onBlur={() => setSelected(null)} onClick={() => setSelected(index)} onKeyDown={(event) => navigate(event, index)} />
-            ))}
-          </div>
+          {days.map((day, index) => (
+            <button key={day.date} ref={(element) => { buttons.current[index] = element; }}
+              type="button" className={styles.day} data-level={day.level}
+              style={{ gridColumn: Math.floor((index + offset) / 7) + 1, gridRow: (index + offset) % 7 + 1, "--cell-index": index } as CSSProperties}
+              tabIndex={focused === index ? 0 : -1} aria-label={describe(day)} title={describe(day)}
+              onFocus={() => { setFocused(index); setSelected(index); }} onBlur={() => setSelected(null)}
+              onClick={() => setSelected(index)} onKeyDown={(event) => navigate(event, index)} />
+          ))}
         </div>
       </div>
-      <div className={styles.detail}>
-        <span aria-live="polite" aria-atomic="true">{selected === null ?
-          `${dayFormat.format(dateOf(days[0]))} – ${dayFormat.format(dateOf(days.at(-1)!))}` : describe(days[selected])}</span>
-        <span className={styles.hint}>Swipe to explore</span>
-      </div>
+      <span className={styles.srOnly} aria-live="polite" aria-atomic="true">
+        {selected === null ? "" : describe(days[selected])}
+      </span>
       <div className={styles.footer}>
         <p><strong>{days.reduce((total, day) => total + day.count, 0).toLocaleString("en")}</strong> contributions in the last year</p>
-        <div className={styles.legend} aria-label="Contribution intensity from less to more">
-          <span>Less</span>{[0, 1, 2, 3, 4].map((level) => <i key={level} className={styles.day} data-level={level} aria-hidden="true" />)}<span>More</span>
-        </div>
       </div>
     </>
   );

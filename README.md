@@ -30,7 +30,7 @@ This stage implements only the personal homepage Hero and its prerequisites. The
 
 The Hero is a Server Component in `components/sections/Hero.tsx`, with scoped CSS and verified content in `data/profile.ts`, `data/hero.ts`, and `data/socials.ts`. See `CONTENT_AUDIT.md` for provenance. The contact CTA currently points to the existing portfolio's contact section; update `profile.contactHref` when the new Contact section exists.
 
-Geist is self-hosted through `next/font`. Light mode with a white background is the default, regardless of the OS theme. Explicit `data-theme="dark"` selection enables dark mode with a black background; `data-theme="light"` restores light mode. No theme control or additional navigation is introduced here.
+Geist is self-hosted through `next/font`. Light mode with a white background is the default, regardless of the OS theme. The desktop section index includes a dark-mode switch; its selection is saved in local storage and updates the root `data-theme` attribute.
 
 Run locally with `npm run dev`. Validate with `npm run lint`, `npm run typecheck`, and `npm run build`.
 

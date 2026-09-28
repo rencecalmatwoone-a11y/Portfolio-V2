@@ -1,4 +1,6 @@
 import { Hero } from "@/components/sections/Hero";
+import { ClosingQuote } from "@/components/sections/ClosingQuote";
+import { SectionReveals } from "@/components/layout/SectionReveals";
 import { Certifications } from "@/components/sections/Certifications";
 import { Education } from "@/components/sections/Education";
 import { GitHubActivity } from "@/components/sections/GitHubActivity";
@@ -7,13 +9,14 @@ import { TechStack } from "@/components/sections/TechStack";
 
 export default function HomePage() {
   return (
-    <main className="page-grid">
+    <SectionReveals>
       <Hero />
       <SelectedWork />
       <TechStack />
       <Education />
       <Certifications />
       <GitHubActivity />
-    </main>
+      <ClosingQuote />
+    </SectionReveals>
   );
 }

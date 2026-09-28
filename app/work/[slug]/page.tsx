@@ -23,7 +23,7 @@ export default async function ProjectPage({ params }: Props) {
   // Minimal working destination; full case studies belong to a later stage.
   return (
     <main style={{ paddingBlock: "var(--space-16)", maxWidth: "46rem" }}>
-      <Link href="/#work">← Selected Work</Link>
+      <Link href="/#work">← Projects</Link>
       <h1 style={{ marginTop: "var(--space-8)" }}>{project.title}</h1>
       <p>{project.description}</p>
       <p>Case study coming soon.</p>

@@ -68,6 +68,16 @@ export function CertificationCarousel({ children, titles }: { children: ReactNod
             </div>
           );
         })}
+        {enhanced && total > 1 && (
+          <>
+            <button className={`${styles.sideControl} ${styles.sideControlPrevious}`} type="button"
+              aria-label={`Show previous certification: ${titles[(active - 1 + total) % total]}`}
+              aria-controls="certification-slides" onClick={() => move(active - 1)} />
+            <button className={`${styles.sideControl} ${styles.sideControlNext}`} type="button"
+              aria-label={`Show next certification: ${titles[(active + 1) % total]}`}
+              aria-controls="certification-slides" onClick={() => move(active + 1)} />
+          </>
+        )}
       </div>
       {enhanced && total > 1 && (
         <>

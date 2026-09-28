@@ -6,7 +6,6 @@
   top: 50%;
   transform: translateY(-50%);
   width: var(--index-width);
-  background: var(--color-background);
   border-top: 1px dotted var(--color-grid);
 }
 
@@ -56,6 +55,51 @@
   outline-offset: 4px;
 }
 @media (min-width: 64rem) { .desktop { display: block; } }
+@media (max-width: 63.999rem) {
+  .desktop {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 2px 12px;
+    inset-inline: 0;
+    top: auto;
+    bottom: 0;
+    transform: none;
+    width: 100%;
+    padding: 8px var(--page-inset) max(8px, env(safe-area-inset-bottom));
+    border-top: 1px dotted var(--color-grid);
+    background: var(--color-background);
+  }
+  .label { display: none; }
+  .links {
+    display: flex;
+    grid-column: 1 / -1;
+    gap: 4px;
+    min-width: 0;
+    overflow-x: auto;
+    padding: 0;
+    border-bottom: 0;
+  }
+  .links a {
+    flex: 0 0 auto;
+    padding: 8px 0 8px 14px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .links a::before { width: 10px; }
+  .desktop > button {
+    grid-column: 2;
+    grid-row: 2;
+    width: auto;
+    margin: 0;
+    padding: 4px 0;
+  }
+  :global(.site-content) { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
+}
+@media (min-width: 64rem) {
+  .links { display: block; overflow: visible; padding: 0 0 10px; }
+  .links a { padding: 11px 0 11px 25px; font-size: 13px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .links a, .links a::before { transition: none; }
 

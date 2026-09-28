@@ -55,6 +55,7 @@
 .certificate { display: block; width: 100%; height: auto; object-fit: contain; }
 
 .carousel[data-enhanced="true"] .stage {
+  position: relative;
   grid-template-columns: minmax(0, 1fr);
   gap: 0; padding: var(--space-8) var(--space-4) var(--space-12);
   overflow: hidden; touch-action: pan-y pinch-zoom; cursor: grab;
@@ -71,6 +72,10 @@
 .carousel[data-enhanced="true"] .slide[data-position="previous"] { z-index: 1; transform: translate(-9%, 10px) rotate(-5deg) scale(0.94); opacity: 0.65; }
 .carousel[data-enhanced="true"] .slide[data-position="next"] { z-index: 2; transform: translate(9%, 10px) rotate(5deg) scale(0.94); opacity: 0.65; }
 .carousel[data-enhanced="true"] .slide[data-position="hidden"] { visibility: hidden; opacity: 0; transform: scale(0.9); pointer-events: none; }
+.sideControl { display: none; }
+.sideControlPrevious, .sideControlNext { position: absolute; inset-block: 0; z-index: 4; width: 22%; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.sideControlPrevious { left: 0; }
+.sideControlNext { right: 0; }
 .controls { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: start; gap: var(--space-4); max-width: 25rem; margin-inline: auto; }
 .controls button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; color: var(--color-text); border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); cursor: pointer; transition: border-color var(--duration-interaction) var(--ease-out); }
 .current { display: grid; gap: var(--space-2); color: var(--color-muted); text-align: center; font-size: 0.75rem; line-height: 1.6; }
@@ -78,6 +83,7 @@
 .hint { margin: var(--space-4) 0 0; color: var(--color-muted); text-align: center; font-size: 0.6875rem; line-height: 1.8; }
 .hint span { display: block; }
 .carousel:focus-visible, .controls button:focus-visible, .credentialLink:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+.sideControl:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -5px; }
 
 @media (min-width: 40rem) {
   .stage { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -85,6 +91,7 @@
     padding: var(--space-8) 0 4.5rem;
     mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
   }
+  .carousel[data-enhanced="true"] .sideControl { display: block; }
   .carousel[data-enhanced="true"] .slide { width: min(66%, 28rem); }
   .carousel[data-enhanced="true"] .slide[data-position="previous"] { transform: translate(-42%, 18px) rotate(-7deg) scale(0.9); }
   .carousel[data-enhanced="true"] .slide[data-position="next"] { transform: translate(42%, 18px) rotate(7deg) scale(0.9); }

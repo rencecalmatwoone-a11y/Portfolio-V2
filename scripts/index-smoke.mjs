@@ -60,10 +60,14 @@ try {
           assert.ok(section.y >= 0 && section.y < 900, `Destination visible: ${id}`);
         }
       } else {
-        assert.equal(await desktop.isVisible(), false);
+        assert.equal(await desktop.isVisible(), true);
         assert.equal(await trigger.count(), 0);
         assert.equal(await dialog.count(), 0);
-        assert.equal(await page.evaluate(() => document.body.style.overflow), '');
+        assert.equal(await desktop.evaluate(el => getComputedStyle(el).position), "fixed");
+        assert.equal(await desktop.locator("a").count(), ids.length);
+        assert.equal(await desktop.locator('button[role="switch"]').isVisible(), true);
+        assert.equal(await desktop.locator("ul").evaluate(el => el.scrollWidth <= el.clientWidth), true);
+        await checkA11y('nav[aria-label="Section index"]');
       }
       await page.screenshot({ path: path.join(output, `index-${width}-${theme}.png`) });
       results.push({ width, theme, navigation: "passed" });

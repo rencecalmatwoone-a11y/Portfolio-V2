@@ -37,7 +37,9 @@ try {
     await page.evaluate(theme => { document.documentElement.dataset.theme = theme; }, theme);
     for (const width of [320, 375, 639, 640, 768, 1023, 1024, 1440, 1920]) {
       await page.setViewportSize({ width, height: 1000 });
+      await page.mouse.move(0, 0);
       await section.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(300);
       const geometry = await section.evaluate(el => {
         const chips = [...el.querySelectorAll("li")].map(h => h.getBoundingClientRect().toJSON());
         const work = document.querySelector("#work");
