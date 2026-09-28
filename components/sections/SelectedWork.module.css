@@ -1,0 +1,36 @@
+.header h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.5vw, 1.75rem);
+  font-weight: 550;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+}
+
+.header p {
+  margin: var(--space-2) 0 0;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-12) var(--space-8);
+}
+
+@media (min-width: 56rem) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid::before {
+    content: "";
+    position: absolute;
+    inset-block: calc(-1 * var(--page-inset)) calc(-1 * var(--space-12));
+    left: 50%;
+    border-left: 1px dotted var(--color-grid);
+    pointer-events: none;
+  }
+}

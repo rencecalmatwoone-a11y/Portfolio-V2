@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { geist } from "@/lib/fonts";
 import { profile } from "@/data/profile";
+import { SiteShell } from "@/components/layout/SiteShell";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={geist.variable}>
-      <body>{children}</body>
+      <body><SiteShell>{children}</SiteShell></body>
     </html>
   );
 }

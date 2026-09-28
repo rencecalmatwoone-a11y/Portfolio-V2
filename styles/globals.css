@@ -9,6 +9,21 @@
   --color-accent: #2f7d52;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-interaction: 200ms;
+  --duration-project-hover: 450ms;
+  --radius-project-image: 14px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --content-width: 46rem;
+  --page-gutter: clamp(0.5rem, 2vw, 1.5rem);
+  --page-inset: clamp(0.75rem, 2.5vw, 1.5rem);
+  --index-width: 9rem;
+  --index-gutter: 0rem;
+  --color-grid: color-mix(in srgb, var(--color-border) 75%, var(--color-background));
 }
 
 :root[data-theme="dark"] {
@@ -22,6 +37,13 @@
 
 * {
   box-sizing: border-box;
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 body {
@@ -33,13 +55,87 @@ body {
 }
 
 main {
-  max-width: 73rem;
+  width: calc(100% - 2 * var(--page-gutter));
+  max-width: calc(var(--content-width) + 2 * var(--page-inset));
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 4vw, 3rem);
+  padding-inline: var(--page-inset);
 }
+
+.site-content {
+  /* Clip the full-width rules without creating a nested scroll container. */
+  overflow-x: clip;
+}
+
+.page-grid {
+  position: relative;
+}
+
+.page-grid::before,
+.page-grid::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  border-inline-start: 1px dotted var(--color-grid);
+  pointer-events: none;
+}
+
+.page-grid::before { inset-inline-start: 0; }
+.page-grid::after { inset-inline-end: 0; }
+
+.page-section,
+.section-heading {
+  position: relative;
+}
+
+.page-section {
+  padding-block: var(--space-8) var(--space-12);
+}
+
+.section-heading {
+  margin-bottom: var(--page-inset);
+  padding-bottom: var(--page-inset);
+}
+
+.page-section::before,
+.section-heading::after,
+.page-section:last-child::after {
+  content: "";
+  position: absolute;
+  /* Extend the same dotted rule through both page margins and the index. */
+  inset-inline: -100vw;
+  border-block-start: 1px dotted var(--color-grid);
+  pointer-events: none;
+}
+
+.page-section::before { inset-block-start: 0; }
+.section-heading::after,
+.page-section:last-child::after { inset-block-end: 0; }
 
 h1 {
   margin: 0 0 1rem;
   font-size: 2rem;
   font-weight: 600;
+}
+
+html { scroll-behavior: smooth; }
+main > section[id] { scroll-margin-top: 5rem; }
+#index-page-end { height: 1px; }
+.skip-link {
+  position: fixed;
+  z-index: 30;
+  top: 12px;
+  left: 20px;
+  padding: 12px;
+  background: var(--color-background);
+  color: var(--color-text);
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: translateY(0); }
+@media (min-width: 64rem) {
+  :root { --index-gutter: clamp(11.25rem, 15vw, 15rem); }
+  .site-content { padding-inline-start: var(--index-gutter); }
+  main > section[id] { scroll-margin-top: 2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }

@@ -1,0 +1,141 @@
+.header h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.5vw, 1.75rem);
+  font-weight: 550;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+}
+
+.filters button {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-muted);
+  font: inherit;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  cursor: pointer;
+  transition:
+    color var(--duration-interaction) var(--ease-out),
+    background-color var(--duration-interaction) var(--ease-out),
+    border-color var(--duration-interaction) var(--ease-out),
+    transform var(--duration-interaction) var(--ease-out);
+}
+
+.filters button[aria-pressed="true"] {
+  border-color: var(--color-border);
+  background: color-mix(in srgb, var(--color-text) 5%, var(--color-background));
+  color: var(--color-text);
+}
+
+.filters button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.filters button:active {
+  transform: scale(0.98);
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: start;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  animation: list-reveal 280ms var(--ease-out);
+}
+
+@keyframes list-reveal {
+  from {
+    opacity: 0.8;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--color-border) 65%, var(--color-background));
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--color-text) 1%, var(--color-background));
+  color: var(--color-text);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  transition:
+    border-color var(--duration-interaction) var(--ease-out),
+    background-color var(--duration-interaction) var(--ease-out),
+    transform var(--duration-interaction) var(--ease-out);
+}
+
+.icon {
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+:global(:root[data-theme="dark"]) .adaptiveIcon {
+  filter: invert(1);
+}
+
+.status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover {
+    border-color: var(--color-border);
+    background: color-mix(in srgb, var(--color-text) 4%, var(--color-background));
+    transform: translateY(-1px);
+  }
+
+  .filters button:hover {
+    color: var(--color-text);
+    background-color: color-mix(in srgb, var(--color-text) 5%, var(--color-background));
+  }
+
+  .filters button:hover:not(:active) {
+    transform: translateY(-1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list {
+    animation: none;
+  }
+
+  .chip,
+  .filters button {
+    transition: none;
+  }
+
+  .chip:hover,
+  .filters button:hover:not(:active),
+  .filters button:active {
+    transform: none;
+  }
+}

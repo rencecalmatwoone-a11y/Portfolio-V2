@@ -1,0 +1,101 @@
+.header h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.5vw, 1.75rem);
+  font-weight: 550;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+}
+.header > p {
+  max-width: 48ch;
+  margin: var(--space-2) 0 0;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+.carousel { border-radius: 8px; }
+.stage { display: grid; gap: var(--space-8); }
+.slide { min-width: 0; }
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 19rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid color-mix(in srgb, var(--color-border) 50%, var(--color-background));
+  border-radius: var(--radius-project-image);
+  background: var(--color-background);
+}
+.cardHeader { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+.issuerRow { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.issuer { margin: 0; font-size: 0.8125rem; line-height: 1.5; font-weight: 550; }
+.index { color: var(--color-muted); font-size: 0.6875rem; font-variant-numeric: tabular-nums; }
+.cardBody { padding-block: var(--space-8); }
+.artwork { display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 5px; background: #f5f6f3; border: 1px solid #dce0d7; border-radius: 8px; }
+.artwork img { width: 100%; height: 100%; object-fit: contain; }
+.details { min-width: 0; }
+.kind { margin: 2px 0 0; color: var(--color-muted); font-size: 0.6875rem; line-height: 1.5; }
+.details h3 { margin: 0; font-size: clamp(1.125rem, 2vw, 1.375rem); line-height: 1.35; font-weight: 600; letter-spacing: -0.035em; overflow-wrap: anywhere; }
+.metadata { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-3) 0 0; font-size: 0.6875rem; line-height: 1.6; color: var(--color-muted); overflow-wrap: anywhere; }
+.status { display: inline-flex; align-items: center; gap: 6px; }
+.status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--color-accent); }
+.status[data-status="in-progress"]::before { background: var(--color-muted); }
+.description { margin: var(--space-3) 0 0; font-size: 0.8125rem; line-height: 1.75; color: var(--color-muted); }
+.cardFooter { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-4); margin-top: auto; padding-top: var(--space-4); border-top: 1px solid color-mix(in srgb, var(--color-border) 55%, var(--color-background)); }
+.cardFooter .metadata { display: grid; gap: 2px; margin: 0; }
+.date { padding-left: 11px; }
+.credentialLink {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  min-height: 40px; padding-block: var(--space-2); color: var(--color-text);
+  font-size: 0.6875rem; font-weight: 500; line-height: 1.5; text-decoration: none;
+  text-underline-offset: 4px;
+  transition: color var(--duration-interaction) var(--ease-out);
+}
+.credentialLink svg { transition: transform var(--duration-interaction) var(--ease-out); }
+.preview { padding: var(--space-3); margin-top: var(--space-4); border-radius: 8px; background: #f5f5f5; overflow: hidden; }
+.certificate { display: block; width: 100%; height: auto; object-fit: contain; }
+
+.carousel[data-enhanced="true"] .stage {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0; padding: var(--space-8) var(--space-4) var(--space-12);
+  overflow: hidden; touch-action: pan-y pinch-zoom; cursor: grab;
+  /* Fade the clipped side cards into either theme without covering controls. */
+  mask-image: linear-gradient(to right, transparent, #000 1rem, #000 calc(100% - 1rem), transparent);
+}
+.carousel[data-enhanced="true"] .stage:active { cursor: grabbing; }
+.carousel[data-enhanced="true"] .slide {
+  grid-area: 1 / 1; width: 100%; justify-self: center;
+  transition: transform 380ms var(--ease-out), opacity 380ms var(--ease-out);
+}
+.carousel[data-enhanced="true"] .slide[data-position="active"] { z-index: 3; transform: none; opacity: 1; }
+.carousel[data-enhanced="true"] .slide[data-position="active"] .card { box-shadow: 0 2px 10px rgb(0 0 0 / 2%); }
+.carousel[data-enhanced="true"] .slide[data-position="previous"] { z-index: 1; transform: translate(-9%, 10px) rotate(-5deg) scale(0.94); opacity: 0.65; }
+.carousel[data-enhanced="true"] .slide[data-position="next"] { z-index: 2; transform: translate(9%, 10px) rotate(5deg) scale(0.94); opacity: 0.65; }
+.carousel[data-enhanced="true"] .slide[data-position="hidden"] { visibility: hidden; opacity: 0; transform: scale(0.9); pointer-events: none; }
+.controls { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: start; gap: var(--space-4); max-width: 25rem; margin-inline: auto; }
+.controls button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; color: var(--color-text); border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); cursor: pointer; transition: border-color var(--duration-interaction) var(--ease-out); }
+.current { display: grid; gap: var(--space-2); color: var(--color-muted); text-align: center; font-size: 0.75rem; line-height: 1.6; }
+.count { color: var(--color-muted); font-size: 0.6875rem; font-variant-numeric: tabular-nums; letter-spacing: 0.06em; }
+.hint { margin: var(--space-4) 0 0; color: var(--color-muted); text-align: center; font-size: 0.6875rem; line-height: 1.8; }
+.hint span { display: block; }
+.carousel:focus-visible, .controls button:focus-visible, .credentialLink:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+
+@media (min-width: 40rem) {
+  .stage { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .carousel[data-enhanced="true"] .stage {
+    padding: var(--space-8) 0 4.5rem;
+    mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
+  }
+  .carousel[data-enhanced="true"] .slide { width: min(66%, 28rem); }
+  .carousel[data-enhanced="true"] .slide[data-position="previous"] { transform: translate(-42%, 18px) rotate(-7deg) scale(0.9); }
+  .carousel[data-enhanced="true"] .slide[data-position="next"] { transform: translate(42%, 18px) rotate(7deg) scale(0.9); }
+  .hint span { display: inline; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .controls button:hover { border-color: var(--color-accent); }
+  .credentialLink:hover { color: var(--color-accent); text-decoration: underline; }
+  .credentialLink:hover svg { transform: translate(2px, -2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .carousel[data-enhanced="true"] .slide, .credentialLink, .credentialLink svg, .controls button { transition: none; }
+  .credentialLink:hover svg { transform: none; }
+}

@@ -1,0 +1,209 @@
+.track {
+  --figure-size: clamp(48px, 7vw, 76px);
+  --walk-duration: 14s;
+  --stand-duration: 1.8s;
+  position: absolute;
+  inset-inline: 0;
+  bottom: 4px;
+  height: var(--figure-size);
+  pointer-events: none;
+}
+
+.runway {
+  width: calc(100% - var(--figure-size));
+  height: 100%;
+}
+
+.traveler {
+  width: 100%;
+  height: 100%;
+  animation: walk-right var(--walk-duration) linear both;
+  animation-play-state: paused;
+}
+
+.figure {
+  display: block;
+  position: relative;
+  width: var(--figure-size);
+  height: var(--figure-size);
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.figure::before {
+  content: "";
+  position: absolute;
+  left: 28%;
+  bottom: 2%;
+  width: 48%;
+  height: 4%;
+  border-radius: 50%;
+  background: var(--color-text);
+  opacity: 0.12;
+  filter: blur(2px);
+}
+
+.sprite,
+.still {
+  display: block;
+  width: var(--figure-size);
+  height: var(--figure-size);
+  background-image: url("/images/hero/walking-figure.webp");
+  background-size: 300% 200%;
+  background-repeat: no-repeat;
+}
+
+.sprite {
+  position: relative;
+  animation: stride 840ms step-end infinite;
+  animation-play-state: paused;
+}
+
+.still {
+  display: none;
+  position: relative;
+  pointer-events: auto;
+}
+
+.bubble {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 60%, var(--color-background));
+  border-radius: 11px;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.45;
+  text-align: left;
+  letter-spacing: -0.015em;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(calc(-50% + 3px));
+  transition: opacity 160ms ease, transform 160ms ease, visibility 160ms;
+}
+
+.bubble::before {
+  content: "";
+  position: absolute;
+  top: calc(50% - 5px);
+  left: -6px;
+  width: 10px;
+  height: 10px;
+  border-left: inherit;
+  border-bottom: inherit;
+  background: inherit;
+  transform: rotate(45deg);
+}
+
+.bubble::after {
+  content: "";
+  position: absolute;
+  inset: -11px;
+  z-index: -1;
+}
+
+.bubble[data-side="left"]::before {
+  left: auto;
+  right: -6px;
+  transform: rotate(225deg);
+}
+
+.bubble[data-side="top"] {
+  top: auto;
+  bottom: calc(100% + 10px);
+  transform: translateY(3px);
+}
+
+.bubble[data-side="top"]::before {
+  top: auto;
+  bottom: -6px;
+  left: calc(var(--bubble-tip) - 5px);
+  transform: rotate(-45deg);
+}
+
+:is(.figure, .still):is(:hover, :focus) .bubble:not([data-dismissed="true"]) {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%);
+}
+
+:is(.figure, .still):is(:hover, :focus) .bubble[data-side="top"] {
+  transform: translateY(0);
+}
+
+.track[data-running="true"] .traveler,
+.track[data-running="true"] .sprite {
+  animation-play-state: running;
+}
+
+.track[data-phase^="stand"] .sprite {
+  animation: none;
+  background-position: 50% 0;
+}
+
+.track[data-phase="stand-right"] .traveler {
+  animation-name: stand-right;
+  animation-duration: var(--stand-duration);
+}
+
+.track[data-phase="walk-left"] .traveler {
+  animation-name: walk-left;
+}
+
+.track[data-phase="stand-left"] .traveler {
+  animation-name: stand-left;
+  animation-duration: var(--stand-duration);
+}
+
+.track[data-phase$="left"] .sprite {
+  transform: scaleX(-1);
+}
+
+.figure:focus-visible,
+.still:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@keyframes walk-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes stand-right {
+  from, to { transform: translateX(100%); }
+}
+
+@keyframes walk-left {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes stand-left {
+  from, to { transform: translateX(0); }
+}
+
+@keyframes stride {
+  0% { background-position: 0 0; }
+  16.6667% { background-position: 50% 0; }
+  33.3333% { background-position: 100% 0; }
+  50% { background-position: 0 100%; }
+  66.6667% { background-position: 50% 100%; }
+  83.3333% { background-position: 100% 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .runway { display: none; }
+  .traveler,
+  .sprite { animation: none; }
+  .still { display: block; }
+  .bubble { transition: none; }
+}

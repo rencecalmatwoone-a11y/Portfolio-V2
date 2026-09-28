@@ -1,0 +1,94 @@
+.header h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.5vw, 1.75rem);
+  font-weight: 550;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+}
+
+.entry {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.entry:not(:last-child) {
+  padding-bottom: var(--space-8);
+  border-bottom: 1px dotted var(--color-grid);
+}
+
+.entry + .entry {
+  padding-top: var(--space-8);
+}
+
+.academic {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: start;
+  column-gap: var(--space-3);
+  min-width: 0;
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  padding: 2px;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.details {
+  grid-column: 2;
+  min-width: 0;
+}
+
+.degree {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+}
+
+.institution,
+.location,
+.period,
+.description {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  line-height: 1.65;
+}
+
+.institution {
+  margin-top: var(--space-1);
+}
+
+.location {
+  margin-top: var(--space-1);
+}
+
+.period {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.description {
+  margin-inline-start: calc(36px + var(--space-3));
+  max-width: 60ch;
+}
+
+@media (min-width: 40rem) {
+  .entry {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--space-8);
+  }
+
+  .period {
+    text-align: right;
+  }
+
+  .description {
+    grid-column: 1 / -1;
+  }
+}
