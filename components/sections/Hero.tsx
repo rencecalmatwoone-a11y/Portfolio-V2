@@ -4,6 +4,35 @@ import { SocialLinks } from "@/components/hero/SocialLinks";
 import { RoleSwitcher } from "@/components/sections/RoleSwitcher";
 import styles from "./Hero.module.css";
 
+const toolLogoFiles = {
+  Figma: "figma.svg",
+  React: "react.svg",
+  "Next.js": "nextjs.svg",
+  TypeScript: "typescript.svg",
+  "Tailwind CSS": "tailwind.svg",
+  WordPress: "wordpress.svg",
+  "Google Stitch": "google-stitch.png",
+} as const;
+
+function ToolMarks({ tools }: { tools: readonly string[] }) {
+  return (
+    <span className={styles.toolMarks} aria-label={`Tools: ${tools.join(", ")}`}>
+      {tools.map((tool) => (
+        <button className={styles.toolMark} key={tool} type="button" aria-label={tool}>
+          <Image
+            className={tool === "Next.js" ? styles.monochromeLogo : undefined}
+            src={`/images/tools/${toolLogoFiles[tool as keyof typeof toolLogoFiles]}`}
+            alt=""
+            width={16}
+            height={16}
+          />
+          <span className={styles.toolTooltip} aria-hidden="true">{tool}</span>
+        </button>
+      ))}
+    </span>
+  );
+}
+
 export function Hero() {
   return (
     <section className={styles.hero} aria-labelledby="hero-heading">
@@ -11,13 +40,14 @@ export function Hero() {
         <h1 id="hero-heading" className={`${styles.introduction} ${styles.enter}`}>
           <span>{hero.greeting}</span>{" "}
           <span className={styles.identity}>
+            <span className={styles.portraitFrame}>
             <Image
               className={`${styles.portrait} ${styles.portraitLight}`}
               src={hero.portrait.src}
               alt={hero.portrait.alt}
               width={hero.portrait.width}
               height={hero.portrait.height}
-              sizes="(max-width: 600px) 44px, 60px"
+              sizes="(max-width: 600px) 56px, 72px"
               preload
             />
             <Image
@@ -26,9 +56,10 @@ export function Hero() {
               alt={hero.portrait.alt}
               width={hero.portrait.width}
               height={hero.portrait.height}
-              sizes="(max-width: 600px) 44px, 60px"
+              sizes="(max-width: 600px) 56px, 72px"
               loading="eager"
             />
+            </span>
             <span>{hero.name}<span className={styles.period}>.</span></span>
           </span>
         </h1>
@@ -37,29 +68,13 @@ export function Hero() {
           I’m a <RoleSwitcher roles={hero.roles} />
         </p>
 
-        <p className={`${styles.description} ${styles.enter}`}>
-          {hero.introduction}
-        </p>
-
-        <p className={`${styles.technology} ${styles.enter}`}>
-          My everyday tools are{" "}
-          {hero.tools.map((tool, index) => (
-            <span key={tool}>
-              {index === hero.tools.length - 1 ? "and " : ""}
-              <span className={styles.tool}>{tool}</span>
-              {index < hero.tools.length - 1 ? ", " : "."}
-            </span>
+        <div className={`${styles.descriptions} ${styles.enter}`}>
+          {hero.descriptions.map((description) => (
+            <p className={styles.description} key={description.text}>
+              <span>{description.text}</span>{" "}
+              <ToolMarks tools={description.tools} />
+            </p>
           ))}
-        </p>
-
-        <div className={`${styles.contact} ${styles.enter}`}>
-          <p>
-            {hero.contactPrompt}{" "}
-            <a className={styles.contactLink} href={hero.contactHref}>
-              {hero.contactLabel}<span className={styles.arrow} aria-hidden="true">↗</span>
-            </a>
-          </p>
-          <p className={styles.location}>Based in {hero.location}.</p>
         </div>
 
         <SocialLinks className={`${styles.socials} ${styles.enter}`} />
