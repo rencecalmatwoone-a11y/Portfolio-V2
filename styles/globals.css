@@ -23,6 +23,7 @@
   --page-inset: clamp(0.75rem, 2.5vw, 1.5rem);
   --index-width: 9rem;
   --color-grid: color-mix(in srgb, var(--color-border) 75%, var(--color-background));
+  --color-guide-dot: #000;
 }
 
 :root[data-theme="dark"] {
@@ -32,6 +33,7 @@
   --color-muted: #acb3ab;
   --color-border: #454d46;
   --color-accent: #7ecb9d;
+  --color-guide-dot: #fff;
 }
 
 * {
@@ -105,19 +107,22 @@ main {
 }
 
 .page-section::before,
-.section-heading::after,
-.page-section:last-child::after {
+.hero-guideline::before,
+.section-heading::after {
   content: "";
   position: absolute;
+  z-index: 1;
   /* Extend the same dotted rule through both page margins and the index. */
   inset-inline: -100vw;
-  border-block-start: 1px dotted var(--color-grid);
+  height: 8px;
+  background:
+    repeating-linear-gradient(90deg, var(--color-grid) 0 1px, transparent 1px 3px) center / 100% 1px no-repeat;
   pointer-events: none;
 }
 
-.page-section::before { inset-block-start: 0; }
-.section-heading::after,
-.page-section:last-child::after { inset-block-end: 0; }
+.page-section::before { inset-block-start: -4px; }
+.hero-guideline::before { inset-block-start: calc(var(--hero-content-start) - 1rem); }
+.section-heading::after { inset-block-end: -4px; }
 
 h1 {
   margin: 0 0 1rem;

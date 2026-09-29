@@ -2,6 +2,7 @@ import Image from "next/image";
 import { hero } from "@/data/hero";
 import { SocialLinks } from "@/components/hero/SocialLinks";
 import { WalkingFigure } from "@/components/hero/WalkingFigure";
+import { DotGridPattern } from "@/components/background-pattern/dot-grid-pattern";
 import { RoleSwitcher } from "@/components/sections/RoleSwitcher";
 import styles from "./Hero.module.css";
 
@@ -36,7 +37,7 @@ function ToolMarks({ tools }: { tools: readonly string[] }) {
 
 export function Hero() {
   return (
-    <section className={styles.hero} aria-labelledby="hero-heading">
+    <section className={`${styles.hero} hero-guideline`} aria-labelledby="hero-heading">
       <div className={styles.content}>
         <h1 id="hero-heading" className={`${styles.introduction} ${styles.enter}`}>
           <span>{hero.greeting}</span>{" "}
@@ -80,6 +81,7 @@ export function Hero() {
 
         <SocialLinks className={`${styles.socials} ${styles.enter}`} />
       </div>
+      <DotGridPattern className={styles.pattern} aria-hidden="true" />
       <WalkingFigure />
     </section>
   );
