@@ -75,6 +75,7 @@
 }
 @media (min-width: 48rem) { .desktop { display: block; } }
 @media (max-width: 47.999rem) {
+  .desktop.archive { display: none; }
   .desktop {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;

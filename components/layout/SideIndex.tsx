@@ -13,19 +13,22 @@ import styles from "./Index.module.css";
 
 export function SideIndex() {
   const pathname = usePathname();
-  const project = projects.find(({ slug }) => pathname === `/work/${slug}`);
-  const items = useMemo(() => project ? projectNavigation(project) : navigation, [project]);
-  const active = useActiveSection(pathname, items, pathname === "/" || !!project);
+  const archive = pathname === "/work";
+  const project = archive ? undefined : projects.find(({ slug }) => pathname === `/work/${slug}`);
+  const items = useMemo(() => archive
+    ? [{ id: "all-work", label: "All Work" }]
+    : project ? projectNavigation(project) : navigation, [archive, project]);
+  const active = useActiveSection(pathname, items, archive || pathname === "/" || !!project);
 
   return (
-    <nav className={`${styles.desktop}${project ? ` ${styles.project}` : ""}`} aria-label={project ? "Project index" : "Section index"}>
-      <p className={styles.label}>{project ? "Project" : ""}</p>
-      <IndexLinks active={active} pathname={pathname} items={items} local={pathname === "/" || !!project} />
-      {project && <Link href="/#work" className={styles.back}>← Projects</Link>}
-      <div className={styles.actions}>
+    <nav className={`${styles.desktop}${project ? ` ${styles.project}` : ""}${archive ? ` ${styles.archive}` : ""}`} aria-label={archive ? "Projects index" : project ? "Project index" : "Section index"}>
+      <p className={styles.label}>{archive ? "Projects" : project ? "Project" : ""}</p>
+      <IndexLinks active={active} pathname={pathname} items={items} local={archive || pathname === "/" || !!project} />
+      {(archive || project) && <Link href={archive ? "/" : "/#work"} className={styles.back}>{archive ? "← Home" : "← Projects"}</Link>}
+      {!archive && <div className={styles.actions}>
         <ThemeToggle />
         <BackToTop />
-      </div>
+      </div>}
     </nav>
   );
 }
