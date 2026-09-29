@@ -77,12 +77,12 @@
 .sideControlPrevious { left: 0; }
 .sideControlNext { right: 0; }
 .controls { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: start; gap: var(--space-4); max-width: 25rem; margin-inline: auto; }
-.controls button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; color: var(--color-text); border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); cursor: pointer; transition: border-color var(--duration-interaction) var(--ease-out); }
+.controls button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; cursor: pointer; }
 .current { display: grid; gap: var(--space-2); color: var(--color-muted); text-align: center; font-size: 0.75rem; line-height: 1.6; }
 .count { color: var(--color-muted); font-size: 0.6875rem; font-variant-numeric: tabular-nums; letter-spacing: 0.06em; }
 .hint { margin: var(--space-4) 0 0; color: var(--color-muted); text-align: center; font-size: 0.6875rem; line-height: 1.8; }
 .hint span { display: block; }
-.carousel:focus-visible, .controls button:focus-visible, .credentialLink:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+.carousel:focus-visible, .credentialLink:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
 .sideControl:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -5px; }
 
 @media (min-width: 40rem) {
@@ -98,11 +98,10 @@
   .hint span { display: inline; }
 }
 @media (hover: hover) and (pointer: fine) {
-  .controls button:hover { border-color: var(--color-accent); }
   .credentialLink:hover { color: var(--color-accent); text-decoration: underline; }
   .credentialLink:hover svg { transform: translate(2px, -2px); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .carousel[data-enhanced="true"] .slide, .credentialLink, .credentialLink svg, .controls button { transition: none; }
+  .carousel[data-enhanced="true"] .slide, .credentialLink, .credentialLink svg { transition: none; }
   .credentialLink:hover svg { transform: none; }
 }

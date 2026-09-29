@@ -6,28 +6,8 @@
   min-height: 30px;
   padding: 0 13px;
   place-items: center;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  background: var(--color-background);
-  color: var(--color-muted);
   cursor: pointer;
   font: inherit;
   font-size: 12px;
   line-height: 1;
-  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
-}
-
-.button:hover {
-  background: var(--color-text);
-  color: var(--color-background);
-  transform: translateY(-2px);
-}
-
-.button:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .button { transition: none; }
 }

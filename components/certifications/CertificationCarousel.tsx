@@ -82,14 +82,14 @@ export function CertificationCarousel({ children, titles }: { children: ReactNod
       {enhanced && total > 1 && (
         <>
           <div className={styles.controls}>
-            <button type="button" aria-label="Previous certification" aria-controls="certification-slides" onClick={() => move(active - 1)}>
+            <button className="keycap" type="button" aria-label="Previous certification" aria-controls="certification-slides" onClick={() => move(active - 1)}>
               <ArrowLeft size={18} aria-hidden="true" />
             </button>
             <div className={styles.current} aria-live="polite" aria-atomic="true">
               <span className={styles.count}>{active + 1} / {total}</span>
               <span>{titles[active]}</span>
             </div>
-            <button type="button" aria-label="Next certification" aria-controls="certification-slides" onClick={() => move(active + 1)}>
+            <button className="keycap" type="button" aria-label="Next certification" aria-controls="certification-slides" onClick={() => move(active + 1)}>
               <ArrowRight size={18} aria-hidden="true" />
             </button>
           </div>

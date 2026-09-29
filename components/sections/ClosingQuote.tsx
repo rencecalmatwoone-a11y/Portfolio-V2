@@ -21,7 +21,7 @@ export function ClosingQuote() {
 		<section className={`page-section ${styles.section}`} aria-label="A personal quote">
 			<div className={styles.quoteBand}>
 				{!revealed && (
-					<button className={styles.revealButton} type="button" onClick={() => setRevealed(true)}>
+					<button className={`${styles.revealButton} keycap`} type="button" onClick={() => setRevealed(true)}>
 						Reveal quote
 					</button>
 				)}

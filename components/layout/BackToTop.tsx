@@ -22,7 +22,7 @@ export function BackToTop() {
 
   return (
     <button
-      className={styles.button}
+      className={`${styles.button} keycap`}
       type="button"
       aria-label="Back to top"
       onClick={() => window.scrollTo({

@@ -24,6 +24,13 @@
   --index-width: 9rem;
   --color-grid: color-mix(in srgb, var(--color-border) 75%, var(--color-background));
   --color-guide-dot: #000;
+  --keycap-face: #fafafa;
+  --keycap-top: #ffffff;
+  --keycap-edge: #e4e4e4;
+  --keycap-border: #e1e1e1;
+  --keycap-rim: #fafafa;
+  --keycap-outline: #ededed;
+  --keycap-shadow: rgb(0 0 0 / 9%);
 }
 
 :root[data-theme="dark"] {
@@ -34,6 +41,55 @@
   --color-border: #454d46;
   --color-accent: #7ecb9d;
   --color-guide-dot: #fff;
+  --keycap-face: #1b1d1b;
+  --keycap-top: #303330;
+  --keycap-edge: #101210;
+  --keycap-border: #414641;
+  --keycap-rim: #181a18;
+  --keycap-outline: #383c38;
+  --keycap-shadow: rgb(0 0 0 / 45%);
+}
+
+.keycap {
+  border: 1px solid var(--keycap-border);
+  border-radius: 9px;
+  background: var(--keycap-face);
+  color: var(--color-muted);
+  box-shadow:
+    0 2px 0 var(--keycap-edge),
+    0 0 0 3px var(--keycap-rim),
+    0 0 0 4px var(--keycap-outline),
+    0 5px 8px var(--keycap-shadow),
+    inset 0 1px 0 var(--keycap-top),
+    inset 0 -1px 0 var(--keycap-edge);
+  transition:
+    color var(--duration-interaction) var(--ease-out),
+    border-color var(--duration-interaction) var(--ease-out),
+    box-shadow var(--duration-interaction) var(--ease-out),
+    transform var(--duration-interaction) var(--ease-out);
+}
+
+.keycap:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 6px;
+}
+
+.keycap:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 0 0 3px var(--keycap-rim),
+    0 0 0 4px var(--keycap-outline),
+    0 2px 4px var(--keycap-shadow),
+    inset 0 2px 3px var(--keycap-edge);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .keycap:hover { color: var(--color-text); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .keycap { transition: none; }
+  .keycap:active { transform: none; }
 }
 
 * {

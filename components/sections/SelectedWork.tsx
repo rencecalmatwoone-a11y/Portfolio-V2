@@ -17,7 +17,7 @@ export function SelectedWork() {
         ))}
       </div>
       <div className={styles.actionRow}>
-        <Link href="/work" className={styles.viewAll}>
+        <Link href="/work" className={`${styles.viewAll} keycap`}>
           View All <ArrowUpRight size={14} aria-hidden="true" />
         </Link>
       </div>

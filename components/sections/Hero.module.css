@@ -102,6 +102,87 @@
   color: var(--color-accent);
 }
 
+.nameGroup {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.nameTrigger {
+  position: relative;
+  display: inline-block;
+  min-width: 2.65em;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nameTrigger:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.signature {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 2.4em;
+  height: 1.82em;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.signatureWritingStroke {
+  stroke-dasharray: 760px;
+  stroke-dashoffset: 760px;
+}
+
+:global(:root[data-theme="dark"]) .signature {
+  filter: invert(1);
+}
+
+.nameTrigger:is(:hover, :focus-visible) .nameText {
+  opacity: 0;
+}
+
+.nameTrigger:is(:hover, :focus-visible) .signature {
+  opacity: 1;
+}
+
+.nameTrigger:is(:hover, :focus-visible) .signatureWritingStroke {
+  animation: writeSignature 2.2s cubic-bezier(0.42, 0, 0.58, 1) both;
+}
+
+.nameTrigger:is(:hover, :focus-visible) + .period {
+  animation: finishSignature 2.2s both;
+}
+
+@media (hover: none) {
+  .nameTrigger:focus .nameText {
+    opacity: 0;
+  }
+
+  .nameTrigger:focus .signature {
+    opacity: 1;
+  }
+
+  .nameTrigger:focus .signatureWritingStroke {
+    animation: writeSignature 2.2s cubic-bezier(0.42, 0, 0.58, 1) both;
+  }
+
+  .nameTrigger:focus + .period {
+    animation: finishSignature 2.2s both;
+  }
+}
+
 .roles {
   max-width: 42rem;
   margin: 1.75rem 0 0;
@@ -437,6 +518,17 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .nameTrigger:is(:hover, :focus-visible) .signatureWritingStroke,
+  .nameTrigger:focus .signatureWritingStroke {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .nameTrigger:is(:hover, :focus-visible) + .period,
+  .nameTrigger:focus + .period {
+    animation: none;
+  }
+
   .portrait,
   .contactLink,
   .arrow,
@@ -463,4 +555,14 @@
 @keyframes roleLetterReveal {
   from { opacity: 0; transform: translateY(0.55em); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes writeSignature {
+  from { stroke-dashoffset: 760px; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes finishSignature {
+  0%, 87% { opacity: 0; }
+  100% { opacity: 1; }
 }
