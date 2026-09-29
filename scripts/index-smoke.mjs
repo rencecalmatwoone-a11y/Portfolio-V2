@@ -32,7 +32,7 @@ try {
   }
   for (const theme of ["light", "dark"]) {
     await page.evaluate(theme => { document.documentElement.dataset.theme = theme; }, theme);
-    for (const width of [320, 375, 768, 1024, 1280, 1440]) {
+    for (const width of [320, 375, 430, 767, 768, 820, 1024, 1280, 1440]) {
       await page.setViewportSize({ width, height: 900 });
       await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
       await page.waitForTimeout(250);
@@ -40,7 +40,7 @@ try {
       assert.equal(await page.locator("body > header").count(), 0);
       const overflow = await page.evaluate(() => ({ overflow: document.documentElement.scrollWidth > innerWidth, elements: [...document.querySelectorAll("body *")].filter(el => el.getBoundingClientRect().right > innerWidth + 1).map(el => `${el.tagName}.${el.className}`).slice(0, 12) }));
       assert.equal(overflow.overflow, false, `${width}/${theme}: ${JSON.stringify(overflow.elements)}`);
-      if (width >= 1024) {
+      if (width >= 768) {
         assert.equal(await desktop.isVisible(), true);
         assert.equal(await trigger.isVisible(), false);
         assert.equal(await desktop.evaluate(el => getComputedStyle(el).position), "fixed");
@@ -67,6 +67,12 @@ try {
         assert.equal(await desktop.locator("a").count(), ids.length);
         assert.equal(await desktop.locator('button[role="switch"]').isVisible(), true);
         assert.equal(await desktop.locator("ul").evaluate(el => el.scrollWidth <= el.clientWidth), true);
+        const bounds = await desktop.boundingBox();
+        assert.equal(bounds.y, 0, "Mobile navigation stays at the top");
+        for (const link of await desktop.locator("a").all()) {
+          assert.ok((await link.boundingBox()).height >= 44, "Mobile links have touch-sized targets");
+          assert.equal(await link.evaluate(el => el.scrollWidth <= el.clientWidth), true, "Mobile labels fit");
+        }
         await checkA11y('nav[aria-label="Section index"]');
       }
       await page.screenshot({ path: path.join(output, `index-${width}-${theme}.png`) });
@@ -93,10 +99,11 @@ try {
   assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior), "auto");
   assert.equal(await desktop.locator("a").first().evaluate(el => getComputedStyle(el).transitionDuration), "0s");
   await page.goto(`${baseURL}/work/ratioflow`, { waitUntil: "networkidle" });
-  assert.equal(await desktop.locator('[aria-current]').count(), 0);
-  await desktop.locator('a[href="/#stack"]').click();
-  await page.waitForURL(`${baseURL}/#stack`);
-  await activeIs("stack");
+  const projectIndex = page.getByRole("navigation", { name: "Project index", exact: true });
+  assert.equal(await projectIndex.locator('[aria-current]').count(), 0);
+  await projectIndex.getByRole("link", { name: "Projects", exact: false }).click();
+  await page.waitForURL(`${baseURL}/#work`);
+  await activeIs("work");
   assert.deepEqual(errors, []);
   console.log(JSON.stringify({ results, keyboard: "passed", scrollTracking: "passed", crossRoute: "passed", reducedMotion: "passed", browserErrors: errors, screenshots: output }, null, 2));
 } finally {

@@ -39,25 +39,27 @@ function Calendar({ days }: { days: ContributionDay[] }) {
 
   return (
     <>
-      <div className={styles.scroll} ref={scrollRef}>
-        <div className={styles.calendar} style={{ "--weeks": weeks } as CSSProperties}
-          role="group" aria-label="Daily GitHub contributions. Use arrow keys to explore, Home for the first day, and End for the latest day.">
-          {days.map((day, index) => (
-            <button key={day.date} ref={(element) => { buttons.current[index] = element; }}
-              type="button" className={styles.day} data-level={day.level}
-              style={{ gridColumn: Math.floor((index + offset) / 7) + 1, gridRow: (index + offset) % 7 + 1, "--cell-index": index } as CSSProperties}
-              tabIndex={focused === index ? 0 : -1} aria-label={describe(day)} title={describe(day)}
-              onFocus={() => { setFocused(index); setSelected(index); }} onBlur={() => setSelected(null)}
-              onClick={() => setSelected(index)} onKeyDown={(event) => navigate(event, index)} />
-          ))}
+      <div className={styles.activity} style={{ "--weeks": weeks } as CSSProperties}>
+        <div className={styles.scroll} ref={scrollRef}>
+          <div className={styles.calendar}
+            role="group" aria-label="Daily GitHub contributions. Use arrow keys to explore, Home for the first day, and End for the latest day.">
+            {days.map((day, index) => (
+              <button key={day.date} ref={(element) => { buttons.current[index] = element; }}
+                type="button" className={styles.day} data-level={day.level}
+                style={{ gridColumn: Math.floor((index + offset) / 7) + 1, gridRow: (index + offset) % 7 + 1, "--cell-index": index } as CSSProperties}
+                tabIndex={focused === index ? 0 : -1} aria-label={describe(day)} title={describe(day)}
+                onFocus={() => { setFocused(index); setSelected(index); }} onBlur={() => setSelected(null)}
+                onClick={() => setSelected(index)} onKeyDown={(event) => navigate(event, index)} />
+            ))}
+          </div>
+        </div>
+        <div className={styles.footer}>
+          <p><strong>{days.reduce((total, day) => total + day.count, 0).toLocaleString("en")}</strong> contributions in the last year</p>
         </div>
       </div>
       <span className={styles.srOnly} aria-live="polite" aria-atomic="true">
         {selected === null ? "" : describe(days[selected])}
       </span>
-      <div className={styles.footer}>
-        <p><strong>{days.reduce((total, day) => total + day.count, 0).toLocaleString("en")}</strong> contributions in the last year</p>
-      </div>
     </>
   );
 }

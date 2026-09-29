@@ -2,7 +2,7 @@
 export const profile = {
   name: "John Mark Clarence Mendoza",
   preferredName: "Rence",
-  roles: ["Front-End Developer", "UI/UX Designer", "Project Manager"],
+  roles: ["Front-End Developer", "UI/UX Designer"],
   location: "Cavite, Philippines",
   introduction:
     "I design interfaces and build responsive web applications. From wireframes to working products, I bring design, front-end development, and project planning together to keep the work clear and on track.",

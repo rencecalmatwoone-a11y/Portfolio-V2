@@ -2,7 +2,7 @@
   display: none;
   position: fixed;
   z-index: 20;
-  left: max(var(--page-gutter), calc((100% + var(--index-gutter) - var(--content-width)) / 2 - 2 * var(--page-inset) - var(--index-width)));
+  left: max(var(--page-gutter), calc((100% - var(--content-width)) / 2 - 2 * var(--page-inset) - var(--index-width)));
   top: 50%;
   transform: translateY(-50%);
   width: var(--index-width);
@@ -18,6 +18,25 @@
   line-height: 1.5;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: var(--space-3);
+  color: var(--color-muted);
+  font-size: 13px;
+  text-decoration: none;
+}
+.back:hover { color: var(--color-text); }
+.back:focus-visible { outline: 2px solid var(--color-text); outline-offset: 4px; }
+
+.actions {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .links { margin: 0; padding: 0 0 10px; list-style: none; border-bottom: 1px dotted var(--color-border); }
@@ -54,51 +73,82 @@
   outline: 2px solid var(--color-text);
   outline-offset: 4px;
 }
-@media (min-width: 64rem) { .desktop { display: block; } }
-@media (max-width: 63.999rem) {
+@media (min-width: 48rem) { .desktop { display: block; } }
+@media (max-width: 47.999rem) {
   .desktop {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: 2px 12px;
+    gap: 0;
     inset-inline: 0;
-    top: auto;
-    bottom: 0;
+    top: 0;
+    bottom: auto;
     transform: none;
     width: 100%;
-    padding: 8px var(--page-inset) max(8px, env(safe-area-inset-bottom));
-    border-top: 1px dotted var(--color-grid);
+    padding: max(4px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) 4px max(8px, env(safe-area-inset-left));
+    border-top: 0;
+    border-bottom: 1px dotted var(--color-grid);
     background: var(--color-background);
   }
   .label { display: none; }
   .links {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 0.8fr 1.2fr 1.6fr 0.9fr;
     grid-column: 1 / -1;
-    gap: 4px;
+    gap: 0;
     min-width: 0;
-    overflow-x: auto;
+    overflow: visible;
     padding: 0;
     border-bottom: 0;
   }
   .links a {
-    flex: 0 0 auto;
-    padding: 8px 0 8px 14px;
-    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 12px 0;
+    font-size: clamp(11px, 2.6vw, 13px);
     white-space: nowrap;
   }
-  .links a::before { width: 10px; }
-  .desktop > button {
+  .links a::before { width: 18px; left: calc(50% - 9px); top: auto; bottom: 4px; }
+  .links a:focus-visible { outline-offset: -2px; }
+  .links a:hover { transform: none; }
+  .actions {
     grid-column: 2;
     grid-row: 2;
-    width: auto;
-    margin: 0;
-    padding: 4px 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
   }
-  :global(.site-content) { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
+  .actions :global(button:first-child) {
+    min-height: 44px;
+    margin: 0;
+    padding: 8px;
+    width: auto;
+  }
+  :global(.site-content) { padding-top: calc(6rem + env(safe-area-inset-top)); }
+  :global(main > section[id]) { scroll-margin-top: calc(7rem + env(safe-area-inset-top)); }
+  .desktop.project {
+    position: static;
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-3) calc(var(--page-gutter) + var(--page-inset));
+    border-bottom: 0;
+  }
+  .project .links, .project .label { display: none; }
+  .project .back { margin: 0; }
+  .project ~ :global(.site-content) { padding-top: 0; }
 }
-@media (min-width: 64rem) {
+@media (min-width: 48rem) {
   .links { display: block; overflow: visible; padding: 0 0 10px; }
   .links a { padding: 11px 0 11px 25px; font-size: 13px; }
+  .actions :global(button:last-child) {
+    position: absolute;
+    top: calc(100% + 20px);
+    left: 0;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .links a, .links a::before { transition: none; }

@@ -16,7 +16,7 @@ const output = path.join(tmpdir(), "portfolio-selected-work-review");
 await mkdir(output, { recursive: true });
 const failures = [];
 const results = [];
-const slugs = ["ratioflow", "collecthieves-tutoy-hub", "musync"];
+const slugs = ["ratioflow", "tutoyhub", "musync"];
 
 try {
   const page = await browser.newPage({ reducedMotion: "reduce" });
@@ -34,9 +34,9 @@ try {
       const section = page.locator("#work");
       await section.scrollIntoViewIfNeeded();
       await page.waitForFunction(() => [...document.querySelectorAll("#work img")].every(img => img.complete && img.naturalWidth > 0));
-      assert.equal(await section.locator("h2").innerText(), "Selected Work");
+      assert.equal(await section.locator("h2").innerText(), "Projects");
       assert.equal(await section.locator("h3").count(), 3);
-      assert.deepEqual(await section.locator("a").evaluateAll(es => es.map(e => e.getAttribute("href"))), slugs.map(slug => `/work/${slug}`));
+      assert.deepEqual(await section.locator("article a").evaluateAll(es => es.map(e => e.getAttribute("href"))), slugs.map(slug => `/work/${slug}`));
       const geometry = await section.evaluate(el => {
         const cards = [...el.querySelectorAll("article")].map(card => card.getBoundingClientRect().toJSON());
         return { cards, scrollWidth: document.documentElement.scrollWidth, followsHero: el.previousElementSibling?.getAttribute("aria-labelledby") === "hero-heading" };
@@ -74,7 +74,7 @@ try {
 
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(baseURL, { waitUntil: "networkidle" });
-  const links = page.locator("#work a");
+  const links = page.locator("#work article a");
   await links.first().focus();
   for (let i = 0; i < slugs.length; i++) {
     assert.equal(await page.locator(":focus").getAttribute("href"), `/work/${slugs[i]}`);
@@ -84,33 +84,40 @@ try {
   await page.keyboard.press("Enter");
   await page.waitForURL(`**/work/${slugs[2]}`);
   assert.equal(await page.locator("h1").innerText(), "MUSYNC");
-  await page.getByRole("link", { name: "Selected Work" }).click();
+  await page.getByRole("link", { name: "← Projects", exact: true }).click();
   await page.waitForURL("**/#work");
   for (const slug of slugs) {
     const response = await page.goto(`${baseURL}/work/${slug}`);
     assert.equal(response.status(), 200);
     assert.equal(await page.locator("h1").count(), 1);
-    assert.ok(await page.getByRole("link", { name: "Visit live project" }).getAttribute("href"));
+    assert.ok(await page.getByRole("link", { name: "View Live" }).getAttribute("href"));
   }
   assert.equal((await page.goto(`${baseURL}/work/missing-project`)).status(), 404);
 
   await page.goto(baseURL, { waitUntil: "networkidle" });
   await page.emulateMedia({ reducedMotion: "no-preference" });
+  await links.first().scrollIntoViewIfNeeded();
+  // Let the existing section reveal settle before placing the hover pointer.
+  await page.locator("#work").evaluate(async section => {
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await Promise.all(section.getAnimations({ subtree: true }).map(animation => animation.finished.catch(() => {})));
+  });
   await links.first().hover();
   await page.waitForTimeout(500);
-  assert.equal(await links.first().locator("img[data-project-image]").evaluate(el => getComputedStyle(el).transform), "matrix(1.02, 0, 0, 1.02, 0, 0)");
+  assert.equal(await links.first().locator("img[data-project-image]").evaluate(el => getComputedStyle(el).transform), "matrix(0.95, 0, 0, 0.95, 0, 0)");
+  assert.equal(await links.first().locator("img[data-project-image]").evaluate(el => getComputedStyle(el.parentElement, "::before").opacity), "1");
   await page.emulateMedia({ reducedMotion: "reduce" });
-  assert.equal(await links.first().locator("img[data-project-image]").evaluate(el => getComputedStyle(el).transform), "none");
+  assert.equal(await links.first().locator("img[data-project-image]").evaluate(el => getComputedStyle(el).transform), "matrix(0.95, 0, 0, 0.95, 0, 0)");
   assert.equal(await links.first().locator("img[data-project-image]").evaluate(el => getComputedStyle(el).transitionDuration), "0s");
 
   const touch = await browser.newPage({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true });
   await touch.goto(baseURL, { waitUntil: "networkidle" });
-  await touch.locator("#work a").first().tap();
+  await touch.locator("#work article a").first().tap();
   await touch.waitForURL("**/work/ratioflow");
   const staticPage = await browser.newPage({ viewport: { width: 375, height: 812 }, javaScriptEnabled: false });
   await staticPage.goto(baseURL, { waitUntil: "networkidle" });
-  assert.equal(await staticPage.locator("#work a").count(), 3);
-  for (const link of await staticPage.locator("#work a").all()) assert.ok(await link.isVisible());
+  assert.equal(await staticPage.locator("#work article a").count(), 3);
+  for (const link of await staticPage.locator("#work article a").all()) assert.ok(await link.isVisible());
   assert.deepEqual(failures, []);
   console.log(JSON.stringify({ results, keyboard: "passed", routes: "3 destinations and unknown 404 passed", touch: "passed", reducedMotion: "passed", hover: "passed", noJavaScript: "passed", accessibility: "section WCAG A/AA automated checks passed", screenshots: output }, null, 2));
 } finally {

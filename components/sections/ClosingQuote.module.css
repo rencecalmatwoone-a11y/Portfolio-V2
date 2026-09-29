@@ -1,12 +1,50 @@
 .section {
-  display: grid;
-  place-items: center;
+  --quote-band-height: 10rem;
+  display: flex;
+  flex-direction: column;
   text-align: center;
+  padding-block: 0;
+}
+
+.quoteBand {
+  display: grid;
+  min-height: var(--quote-band-height);
+  flex: 0 0 auto;
+  place-items: center;
+  width: 100%;
 }
 
 .quote {
   width: min(100%, 34rem);
   margin: 0;
+}
+
+.pattern {
+  width: calc(100% + var(--page-inset) + var(--page-inset));
+  min-height: 10rem;
+  flex: 0 0 10rem;
+  margin-inline: calc(0px - var(--page-inset));
+  background-color: var(--color-background);
+  background-image: radial-gradient(circle, var(--color-grid) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+.guidelines {
+  position: absolute;
+  z-index: 1;
+  inset-block: 0;
+  inset-inline: calc(0px - var(--page-inset));
+  border-inline: 1px dotted var(--color-grid);
+  pointer-events: none;
+}
+
+.guidelines::before {
+  position: absolute;
+  inset-block-start: var(--quote-band-height);
+  inset-inline: -100vw;
+  border-block-start: 1px dotted var(--color-grid);
+  content: "";
+  pointer-events: none;
 }
 
 .quote p {

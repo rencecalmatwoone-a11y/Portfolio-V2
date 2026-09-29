@@ -112,6 +112,53 @@ motion. The education smoke's former end-of-page assertion was updated to expect
 Certifications as its next sibling. Automated checks do not replace a manual
 screen-reader audit.
 
+## Project case studies
+
+The three case studies share `app/work/[slug]/page.tsx`. Existing descriptions,
+technology lists, project titles, and cover assets are retained. TuToy Hub now
+uses `/work/tutoyhub`; its previous `/work/collecthieves-tutoy-hub` URL permanently
+redirects there. Homepage project links continue to derive from the same data.
+
+Overview, reflection, and highlight copy is condensed from the original
+portfolio's `src/App.jsx` project descriptions (lines 875-957), the existing
+verified project records, and the real interfaces. TuToy Hub retains Figma and
+Wireframing as the documented contribution tools; an implementation stack is
+not inferred. Repository links, outcomes, and metrics remain unset.
+
+Additional gallery assets were captured from the public live applications on
+2026-09-29, without modifying their interfaces or submitting data:
+
+- `ratioflow-upload.webp`: https://ratioflow-umber.vercel.app/ opening upload
+  screen; 1440 x 1000, 34,112 bytes.
+- `tutoyhub-platform.webp`: https://tutoyhub.shop/ platform introduction section;
+  1440 x 609, 36,198 bytes.
+- `musync-multiplayer.webp`: https://musyncsongguessinggame.vercel.app/ after
+  selecting the Multiplayer tab; 1440 x 1000, 37,036 bytes. The screenshot shows
+  the public lobby/practice entry screen; no multiplayer session was created.
+
+These captures are encoded as quality-88 WebP with their original dimensions.
+Each page uses its existing cover and one distinct gallery screenshot, with
+no generated screens or repeated images to extend the page. Only the cover is
+prioritized; the other image is lazy-loaded through `next/image`.
+
+The supplied Echo project page was inspected in a browser for its narrow text,
+wider visuals, whitespace, captions, and overall flow. Its content, artwork,
+branding, and technology cards were not reused. The page uses the portfolio's
+existing Geist font, theme tokens, dotted borders, and side index. Project
+sections use the same active-section hook, with a smaller activation threshold
+for short text sections. On mobile, the index becomes a static Projects link
+and the existing theme toggle. No dependencies or animation system were added.
+
+Verification: lint, TypeScript, and production build passed. The case-study
+browser smoke covered all three routes at 320/375/767/768/1024/1440/1920px in
+light and dark themes, image loading, keyboard focus and section activation,
+related-project navigation, homepage project links, the legacy redirect,
+unknown-slug 404, and content without JavaScript. Automated axe WCAG A/AA checks
+passed in both themes. The existing index smoke also passed its homepage,
+cross-route, scroll tracking, keyboard, and reduced-motion checks. Desktop and
+mobile screenshots were visually reviewed. No manual screen-reader audit or
+authenticated live-project workflows were performed.
+
 Logo/secondary-entry revision: build, lint, TypeScript, and the updated Education
 smoke passed against production Edge on port 3192. Both rows were checked at
 320–1920px in both themes, including logo loading, long institution wrapping,
@@ -239,8 +286,9 @@ were visually reviewed against the supplied chip reference.
 - The secondary entry was restored at the user's request from the original local
   portfolio's `src/App.jsx` (lines 808–824): High School / Senior High School,
   Tagaytay City Science National High School – Integrated Senior High School,
-  Tagaytay, Cavite, 2016–2022. No grades, honors, accomplishments, certifications,
-  coursework, or academic organizations have been added.
+  Tagaytay, Cavite, 2016–2022. Its original description is also restored verbatim,
+  including graduation with honors and the foundation in science, mathematics,
+  and technology that sparked an interest in programming and digital design.
 - At the user's request, the NCST logo is copied without alteration from the
   original portfolio's `src/assets/ncst-logo.png` to `public/images/education/`.
   It is shown at 36px with `next/image`, a white backing for dark-mode readability,

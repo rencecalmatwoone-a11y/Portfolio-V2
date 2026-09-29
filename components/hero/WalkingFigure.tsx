@@ -20,12 +20,9 @@ export function WalkingFigure() {
     const tooltip = figure.querySelector<HTMLElement>('[role="tooltip"]');
     if (!track || !tooltip) return;
     const width = Math.min(240, track.width);
-    const gap = 10;
-    const rightSpace = track.right - bounds.right;
-    const leftSpace = bounds.left - track.left;
-    const side = rightSpace >= width + gap ? "right" : leftSpace >= width + gap ? "left" : "top";
-    const left = side === "right" ? bounds.width + gap : side === "left" ? -width - gap
-      : Math.max(track.left - bounds.left, Math.min((bounds.width - width) / 2, track.right - bounds.left - width));
+    const gap = 4;
+    const side = "top";
+    const left = Math.max(track.left - bounds.left, Math.min((bounds.width - width) / 2, track.right - bounds.left - width));
     tooltip.dataset.side = side;
     tooltip.style.left = `${left}px`;
     tooltip.style.width = `${width}px`;
@@ -51,7 +48,7 @@ export function WalkingFigure() {
 
   const bubble = (id: string) => (
     <span id={id} role="tooltip" className={styles.bubble} data-dismissed={dismissed}>
-      Just casually walking.<br />Listening to Frank Ocean.
+      I&apos;m just casually walking while listening to Frank Ocean.
     </span>
   );
 

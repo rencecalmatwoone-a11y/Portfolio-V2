@@ -1,6 +1,6 @@
 .hero {
   position: relative;
-  padding-block: clamp(4.5rem, 10vw, 8.5rem) clamp(4rem, 8vw, 7rem);
+  padding-block: clamp(4.5rem, 10vw, 8.5rem) clamp(4.75rem, calc(8vw + 0.75rem), 7.75rem);
 }
 
 .content {

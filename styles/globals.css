@@ -22,7 +22,6 @@
   --page-gutter: clamp(0.5rem, 2vw, 1.5rem);
   --page-inset: clamp(0.75rem, 2.5vw, 1.5rem);
   --index-width: 9rem;
-  --index-gutter: 0rem;
   --color-grid: color-mix(in srgb, var(--color-border) 75%, var(--color-background));
 }
 
@@ -129,15 +128,31 @@ h1 {
 html { scroll-behavior: smooth; }
 main > section[id] { scroll-margin-top: 5rem; }
 #index-page-end { height: 1px; }
-::view-transition-old(root) {
+html[data-theme-transition="pixels"]::view-transition-old(root),
+html[data-theme-transition="pixels"]::view-transition-new(root) {
   animation: none;
+  mix-blend-mode: normal;
 }
-::view-transition-new(root) {
-  animation: theme-reveal 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+html[data-theme-transition="pixels"]::view-transition-old(root) {
+  z-index: 1;
 }
-@keyframes theme-reveal {
-  from { clip-path: circle(0 at var(--theme-transition-x) var(--theme-transition-y)); }
-  to { clip-path: circle(150vmax at var(--theme-transition-x) var(--theme-transition-y)); }
+html[data-theme-transition="pixels"]::view-transition-new(root) {
+  z-index: 2;
+}
+/* Keep the animated figure out of the frozen outgoing page snapshot. */
+html[data-theme-transition="pixels"] [data-walking-figure] {
+  view-transition-name: walking-figure;
+}
+html[data-theme-transition="pixels"]::view-transition-group(walking-figure) {
+  animation: none;
+  z-index: 3;
+}
+html[data-theme-transition="pixels"]::view-transition-old(walking-figure) {
+  display: none;
+}
+html[data-theme-transition="pixels"]::view-transition-new(walking-figure) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 .skip-link {
   position: fixed;
@@ -150,9 +165,10 @@ main > section[id] { scroll-margin-top: 5rem; }
   transform: translateY(-200%);
 }
 .skip-link:focus { transform: translateY(0); }
-@media (min-width: 64rem) {
-  :root { --index-gutter: clamp(11.25rem, 15vw, 15rem); }
-  .site-content { padding-inline-start: var(--index-gutter); }
+@media (min-width: 48rem) {
+  main.page-grid {
+    width: min(calc(100% - 2 * (var(--index-width) + 2 * var(--page-inset))), calc(var(--content-width) + 2 * var(--page-inset)));
+  }
   main > section[id] { scroll-margin-top: 2rem; }
 }
 @media (prefers-reduced-motion: reduce) {

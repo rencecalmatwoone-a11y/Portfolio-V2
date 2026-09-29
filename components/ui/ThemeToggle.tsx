@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useSyncExternalStore, type MouseEvent } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
+import { pixelWipeFrames } from "@/lib/theme-transition";
 import styles from "./ThemeToggle.module.css";
 
 const THEME_STORAGE_KEY = "portfolio-theme";
+let activeTransition: ViewTransition | undefined;
 
 function subscribe(onChange: () => void) {
 	window.addEventListener("themechange", onChange);
@@ -23,18 +25,23 @@ export function ThemeToggle() {
 	const isDark = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
 	useEffect(() => {
-		const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-		if (storedTheme === "dark" || storedTheme === "light") {
-			document.documentElement.dataset.theme = storedTheme;
-		}
+		try {
+			const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+			if (storedTheme === "dark" || storedTheme === "light") {
+				document.documentElement.dataset.theme = storedTheme;
+			}
+		} catch { /* Keep the current theme when storage is unavailable. */ }
 		window.dispatchEvent(new Event("themechange"));
 	}, []);
 
-	function toggleTheme(event: MouseEvent<HTMLButtonElement>) {
+	async function toggleTheme() {
+		if (activeTransition) return;
 		const nextTheme = isDark ? "light" : "dark";
 		const applyTheme = () => {
 			document.documentElement.dataset.theme = nextTheme;
-			window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+			try {
+				window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+			} catch { /* Theme switching also works without persistent storage. */ }
 			window.dispatchEvent(new Event("themechange"));
 		};
 
@@ -44,16 +51,23 @@ export function ThemeToggle() {
 		}
 
 		const root = document.documentElement;
-		const bounds = event.currentTarget.getBoundingClientRect();
-		root.style.setProperty("--theme-transition-x", `${bounds.left + bounds.width / 2}px`);
-		root.style.setProperty("--theme-transition-y", `${bounds.top + bounds.height / 2}px`);
-
+		root.dataset.themeTransition = "pixels";
 		const transition = document.startViewTransition(applyTheme);
-		const clearOrigin = () => {
-			root.style.removeProperty("--theme-transition-x");
-			root.style.removeProperty("--theme-transition-y");
-		};
-		void transition.finished.then(clearOrigin, clearOrigin);
+		activeTransition = transition;
+		try {
+			await transition.ready;
+			root.animate(pixelWipeFrames(window.innerWidth, window.innerHeight, nextTheme === "dark"), {
+				duration: 850,
+				fill: "both",
+				pseudoElement: "::view-transition-new(root)",
+			});
+		} catch {
+			transition.skipTransition();
+		} finally {
+			await transition.finished.catch(() => {});
+			delete root.dataset.themeTransition;
+			activeTransition = undefined;
+		}
 	}
 
 	return (

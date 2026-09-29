@@ -4,7 +4,7 @@
   --stand-duration: 1.8s;
   position: absolute;
   inset-inline: 0;
-  bottom: 4px;
+  bottom: 0;
   height: var(--figure-size);
   pointer-events: none;
 }
@@ -82,7 +82,7 @@
   font-size: 13px;
   font-weight: 550;
   line-height: 1.45;
-  text-align: left;
+  text-align: center;
   letter-spacing: -0.015em;
   opacity: 0;
   visibility: hidden;
@@ -118,7 +118,7 @@
 
 .bubble[data-side="top"] {
   top: auto;
-  bottom: calc(100% + 10px);
+  bottom: calc(100% + 4px);
   transform: translateY(3px);
 }
 

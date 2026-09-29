@@ -41,10 +41,14 @@
 .profile svg { flex-shrink: 0; }
 .githubIcon { width: 16px; height: 16px; flex-shrink: 0; background: currentColor; mask: url("/images/socials/github.svg") center / contain no-repeat; }
 
-.scroll { overflow-x: auto; padding: 3px; margin: -3px; overscroll-behavior-x: contain; }
-.calendar {
+.activity {
   --cell: 8px;
   --gap: 3px;
+  width: min(calc(var(--weeks) * (var(--cell) + var(--gap)) - var(--gap)), 100%);
+  margin-inline: auto;
+}
+.scroll { overflow-x: auto; padding: 3px; margin: -3px; overscroll-behavior-x: contain; }
+.calendar {
   display: grid;
   grid-template-columns: repeat(var(--weeks), var(--cell));
   grid-template-rows: repeat(7, var(--cell));
@@ -74,7 +78,7 @@ button.day { cursor: pointer; }
 .day[data-level="4"] { background: var(--activity-4); }
 button.day:hover, button.day:focus-visible { outline: 2px solid var(--color-text); outline-offset: 1px; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-.footer { justify-content: center; margin-top: var(--space-2); font-size: 0.75rem; color: var(--color-muted); line-height: 1.6; text-align: center; }
+.footer { justify-content: flex-start; margin-top: var(--space-2); font-size: 0.75rem; color: var(--color-muted); line-height: 1.6; text-align: left; }
 .footer p, .error p { margin: 0; }
 .footer strong { color: var(--color-text); font-weight: 550; }
 .placeholder { display: grid; min-height: 88px; place-items: center; color: var(--color-muted); font-size: 0.8125rem; text-align: center; }

@@ -27,5 +27,7 @@ export const education: Education[] = [
     logo: "/images/education/tcsnhs-logo.jpg",
     location: "Tagaytay, Cavite",
     period: "2016 — 2022",
+    description:
+      "Graduated with honors — having completed secondary education, building a strong foundation in science, mathematics, and technology that sparked an early interest in programming and digital design.",
   },
 ];

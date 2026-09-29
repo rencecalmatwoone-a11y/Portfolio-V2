@@ -53,7 +53,7 @@ try {
     await button.focus();
     await page.waitForTimeout(180);
     assert.equal(await bubble.isVisible(), true, "Keyboard focus reveals the speech bubble");
-    assert.equal(await bubble.innerText(), "Just casually walking.\nListening to Frank Ocean.");
+    assert.equal((await bubble.innerText()).replace(/\s+/g, " ").trim(), "I'm just casually walking while listening to Frank Ocean.");
     await page.keyboard.press("Enter");
     await button.evaluate((el) => el.blur());
     await page.waitForTimeout(160);
@@ -70,6 +70,10 @@ try {
       assert.equal(await bubble.isVisible(), true, "Hover reveals the speech bubble");
       const bubbleBounds = await bubble.boundingBox();
       assert.ok(bubbleBounds.x >= 0 && bubbleBounds.x + bubbleBounds.width <= width, `Bubble fits at ${width}, progress ${progress}`);
+      const side = await bubble.getAttribute("data-side");
+      const visibleFigureBounds = await button.boundingBox();
+      assert.equal(side, "top", `Bubble stays above figure at ${width}, progress ${progress}`);
+      assert.ok(Math.abs(bubbleBounds.y + bubbleBounds.height + 4 - visibleFigureBounds.y) <= 1, `Bubble stays 4px above figure at ${width}, progress ${progress}`);
       await page.mouse.move(bubbleBounds.x + bubbleBounds.width / 2, bubbleBounds.y + bubbleBounds.height / 2);
       const hoverX = (await button.boundingBox()).x;
       await page.waitForTimeout(100);

@@ -7,7 +7,7 @@ export type ContributionDay = { date: string; count: number; level: number };
 
 export function parseContributions(value: unknown): ContributionDay[] {
   const days = (value as { contributions?: unknown } | null)?.contributions;
-  if (!Array.isArray(days) || !days.length || days.length > 366) throw new Error("Invalid calendar");
+  if (!Array.isArray(days) || !days.length || days.length > 367) throw new Error("Invalid calendar");
   const result: ContributionDay[] = days.map((day: ContributionDay) => {
     if (!day || !/^\d{4}-\d{2}-\d{2}$/.test(day.date) ||
       !Number.isFinite(Date.parse(`${day.date}T00:00:00Z`)) ||

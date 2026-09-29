@@ -35,9 +35,10 @@ try {
       assert.equal(await page.locator("h1").count(), 1);
       assert.match(await page.locator("h1").innerText(), /John Mark/);
       const hero = page.locator("section[aria-labelledby='hero-heading']");
-      for (const role of ["UI/UX Designer", "Front-End Developer", "Project Manager"]) {
+      for (const role of ["UI/UX Designer", "Front-End Developer"]) {
         assert.ok((await hero.innerText()).includes(role));
       }
+      assert.ok(!(await hero.innerText()).includes("Project Manager"));
       const geometry = await hero.evaluate((el) => {
         const heading = el.querySelector("h1");
         const image = el.querySelector("img");

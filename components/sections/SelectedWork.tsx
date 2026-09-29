@@ -9,7 +9,7 @@ export function SelectedWork() {
     <section id="work" className="page-section" aria-labelledby="projects-heading">
       <header className={`section-heading ${styles.header}`}>
         <h2 id="projects-heading">Projects</h2>
-        <p>A selection of interfaces and products I’ve worked on.</p>
+        <p>A selection of interfaces and websites I’ve designed and built.</p>
       </header>
       <div className={styles.grid}>
         {featuredProjects.map((project) => (
