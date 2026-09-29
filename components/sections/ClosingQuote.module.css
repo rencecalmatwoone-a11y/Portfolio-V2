@@ -19,6 +19,70 @@
   margin: 0;
 }
 
+.quote[hidden] {
+  display: none;
+}
+
+.quoteLine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.quoteMarks {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.quoteIcon {
+  flex: 0 0 auto;
+  color: var(--color-accent);
+}
+
+.quoteIconEnd {
+  flex: 0 0 auto;
+  color: var(--color-accent);
+  transform: rotate(180deg);
+}
+
+.revealButton {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-background);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-border) 22%, transparent);
+  color: var(--color-muted);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: border-color var(--duration-interaction) var(--ease-out),
+    color var(--duration-interaction) var(--ease-out),
+    transform var(--duration-interaction) var(--ease-out);
+}
+
+.revealButton:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .revealButton:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .revealButton {
+    transition: none;
+  }
+}
+
 .pattern {
   width: calc(100% + var(--page-inset) + var(--page-inset));
   min-height: 10rem;
