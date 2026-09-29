@@ -1,8 +1,10 @@
 import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import { ProjectVisual } from "@/components/projects/ProjectVisual";
+import { skillIcons } from "@/data/skill-icons";
 import { projects } from "@/data/projects";
 import styles from "./page.module.css";
 
@@ -51,7 +53,11 @@ export default async function ProjectPage({ params }: Props) {
         <section id="stack" className={`${styles.text} ${styles.section}`} aria-labelledby="stack-heading">
           <h2 id="stack-heading">Project Stack</h2>
           <ul className={styles.stack}>
-            {project.technologies.map((technology) => <li key={technology}>{technology}</li>)}
+            {project.technologies.filter((technology) => skillIcons[technology]).map((technology) => (
+              <li key={technology} title={technology}>
+                <Image src={skillIcons[technology]} alt={technology} width={20} height={20} className={styles.stackIcon} />
+              </li>
+            ))}
           </ul>
         </section>
       )}

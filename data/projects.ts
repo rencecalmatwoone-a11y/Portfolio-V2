@@ -48,7 +48,7 @@ export const projects: readonly Project[] = [
       "A platform for toy stores and collectors, with auctions and a virtual showroom. I contributed UI/UX design and managed the development process.",
     category: "Collectibles platform",
     role: "UI/UX Design · Project Management",
-    technologies: ["Figma", "Wireframing"],
+    technologies: ["Figma", "React", "TypeScript", "Tailwind CSS", "Wireframing"],
     featured: true,
     order: 2,
     liveUrl: "https://tutoyhub.shop/",

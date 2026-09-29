@@ -24,7 +24,7 @@ export function SideIndex() {
     <nav className={`${styles.desktop}${project ? ` ${styles.project}` : ""}${archive ? ` ${styles.archive}` : ""}`} aria-label={archive ? "Projects index" : project ? "Project index" : "Section index"}>
       <p className={styles.label}>{archive ? "Projects" : project ? "Project" : ""}</p>
       <IndexLinks active={active} pathname={pathname} items={items} local={archive || pathname === "/" || !!project} />
-      {(archive || project) && <Link href={archive ? "/" : "/#work"} className={styles.back}>{archive ? "← Home" : "← Projects"}</Link>}
+      {(archive || project) && <Link href="/#work" className={styles.back}>← Projects</Link>}
       {!archive && <div className={styles.actions}>
         <ThemeToggle />
         <BackToTop />

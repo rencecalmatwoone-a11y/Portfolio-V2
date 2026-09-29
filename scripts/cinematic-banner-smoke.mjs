@@ -30,6 +30,8 @@ try {
         const [base, mid, foreground] = element.querySelectorAll("img");
         const [dim, glow] = element.querySelector("span").querySelectorAll("span");
         const section = element.parentElement;
+        const sceneBounds = element.getBoundingClientRect();
+        const sectionBounds = section.getBoundingClientRect();
         return {
           height: element.getBoundingClientRect().height,
           width: element.getBoundingClientRect().width,
@@ -43,7 +45,10 @@ try {
           wind: getComputedStyle(mid.parentElement).animationName,
           dim: getComputedStyle(dim).animationName,
           glow: getComputedStyle(glow).animationName,
-          noGuidelines: section.childElementCount === 1 && getComputedStyle(section, "::before").content === "none" && getComputedStyle(section, "::after").content === "none",
+          guidelineAligned: Math.abs(
+            Number.parseFloat(getComputedStyle(section, "::after").top)
+              - (sceneBounds.top - sectionBounds.top + sceneBounds.height - 4),
+          ) < 1,
           cornerBlend: getComputedStyle(element, "::after").backgroundImage,
           sunsetRays: getComputedStyle(element.lastElementChild).backgroundImage,
           rayMask: getComputedStyle(element.lastElementChild).maskImage,
@@ -65,7 +70,7 @@ try {
       assert.equal(state.wind === "none", reducedMotion === "reduce");
       assert.equal(state.dim === "none", reducedMotion === "reduce");
       assert.equal(state.glow === "none", reducedMotion === "reduce");
-      assert.equal(state.noGuidelines, true);
+      assert.equal(state.guidelineAligned, true);
       assert.match(state.cornerBlend, /radial-gradient/);
       assert.match(state.sunsetRays, /conic-gradient/);
       assert.match(state.rayMask, /radial-gradient/);

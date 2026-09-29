@@ -17,7 +17,9 @@
 .page a:hover { color: var(--color-accent); }
 .page a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 5px; border-radius: 2px; }
 .page .section { margin-top: clamp(3rem, 7vw, 5rem); scroll-margin-top: var(--space-8); }
-.stack { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-8); padding: 0; margin: 0; list-style: none; color: var(--color-muted); }
+.stack { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-8); padding: 0; margin: 0; list-style: none; color: var(--color-muted); }
+.stack li { display: flex; align-items: center; min-height: 24px; }
+.stackIcon { width: 20px; height: 20px; object-fit: contain; }
 .gallery { display: grid; gap: clamp(2.5rem, 6vw, 4rem); }
 .gallery .reflection { margin-block: var(--space-3); }
 .highlights { padding-left: 1.1rem; margin: 0; list-style: disc; color: var(--color-muted); }

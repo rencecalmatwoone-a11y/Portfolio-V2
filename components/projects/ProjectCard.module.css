@@ -43,20 +43,6 @@
   transition: opacity var(--duration-project-hover) var(--ease-out);
 }
 
-.pin {
-  position: absolute;
-  top: 7%;
-  right: 6%;
-  display: grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  border: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
-  border-radius: 5px;
-  color: var(--color-muted);
-  z-index: 2;
-}
-
 .image {
   display: block;
   width: 100%;
@@ -87,8 +73,6 @@
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
-  gap: 5px;
-  padding: 2px 7px;
   border: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
   border-radius: 999px;
   color: var(--color-muted);
@@ -130,7 +114,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3) var(--space-4);
   padding: 0;
   margin: 0;
   list-style: none;
@@ -142,16 +126,6 @@
 .stack li {
   display: flex;
   align-items: center;
-}
-
-.toolIcon {
-  filter: grayscale(1);
-  opacity: 0.55;
-}
-
-:global(:root[data-theme="dark"]) .toolIcon {
-  filter: grayscale(1) invert(1);
-  opacity: 0.7;
 }
 
 .action {

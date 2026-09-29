@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, PanelsTopLeft, Pin } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { projectToolIcons } from "@/data/project-tools";
 import type { Project } from "@/types/project";
 import styles from "./ProjectCard.module.css";
@@ -14,7 +14,6 @@ export function ProjectCard({ project }: { project: Project }) {
         aria-labelledby={`${project.slug}-title ${project.slug}-action`}
       >
         <div className={styles.imageFrame}>
-          {project.order === 1 && <span className={styles.pin} title="Featured project"><Pin size={12} aria-label="Featured project" /></span>}
           <Image
             data-project-image
             src={project.image.src}
@@ -34,13 +33,9 @@ export function ProjectCard({ project }: { project: Project }) {
           <p className={styles.description}>{project.description}</p>
           <div className={styles.footer}>
             <ul className={styles.stack} aria-label={`${project.title} tools and technologies`}>
-              {project.technologies.slice(0, 3).map((technology) => (
+              {project.technologies.filter((technology) => projectToolIcons[technology]).slice(0, 3).map((technology) => (
                 <li key={technology} title={technology}>
-                  {projectToolIcons[technology] ? (
-                    <Image src={projectToolIcons[technology]} alt={technology} width={14} height={14} className={styles.toolIcon} />
-                  ) : technology === "Wireframing" ? (
-                    <PanelsTopLeft size={14} role="img" aria-label={technology} />
-                  ) : technology}
+                  <Image src={projectToolIcons[technology]} alt={technology} width={14} height={14} className={styles.toolIcon} />
                 </li>
               ))}
             </ul>

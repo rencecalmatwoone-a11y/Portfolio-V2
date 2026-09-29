@@ -14,7 +14,7 @@ export default function WorkPage() {
   return (
     <main className={`page-grid ${styles.page}`}>
       <header className={styles.header}>
-        <Link href="/" className={styles.mobileHome}>← Home</Link>
+        <Link href="/#work" className={styles.mobileHome}>← Projects</Link>
         <h1>Projects</h1>
         <p className={styles.intro}>
           A collection of interfaces, utilities, and web applications I’ve designed, developed, and helped shape.
