@@ -43,6 +43,20 @@
   transition: opacity var(--duration-project-hover) var(--ease-out);
 }
 
+.pin {
+  position: absolute;
+  top: 7%;
+  right: 6%;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
+  border-radius: 5px;
+  color: var(--color-muted);
+  z-index: 2;
+}
+
 .image {
   display: block;
   width: 100%;
@@ -73,6 +87,8 @@
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
   border: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
   border-radius: 999px;
   color: var(--color-muted);
