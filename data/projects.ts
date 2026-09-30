@@ -118,6 +118,26 @@ export const projects: readonly Project[] = [
       height: 810,
     },
   },
+  {
+    slug: "my-island-surprises",
+    title: "My Island Surprises",
+    description: "I'm fully redesigning and modernizing the whole website.",
+    category: "Wellness website",
+    technologies: [],
+    featured: true,
+    order: 4,
+    liveUrl: "https://www.myislandsurprises.com/",
+    status: "Ongoing",
+    overview: [
+      "My Island Surprises is a website focused on spiritual growth and holistic well-being. I'm fully redesigning and modernizing the whole website.",
+    ],
+    image: {
+      src: "/images/projects/my-island-surprises-homepage.webp",
+      alt: "My Island Surprises homepage with island navigation, a jungle hero, and the start of the It's All About You section.",
+      width: 1349,
+      height: 636,
+    },
+  },
 ];
 
 export const featuredProjects = projects

@@ -33,6 +33,7 @@ export default async function ProjectPage({ params }: Props) {
   return (
     <main className={`page-grid ${styles.page}`}>
       <header className={`${styles.text} ${styles.hero}`}>
+        {project.status === "Ongoing" && <span className={styles.status}>Ongoing</span>}
         <h1>{project.title}</h1>
         <p className={styles.description}>{project.description}</p>
         {(project.liveUrl || project.repositoryUrl) && (

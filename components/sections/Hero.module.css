@@ -141,8 +141,8 @@
 }
 
 .signatureWritingStroke {
-  stroke-dasharray: 760px;
-  stroke-dashoffset: 760px;
+  stroke-dasharray: 700px;
+  stroke-dashoffset: 700px;
 }
 
 :global(:root[data-theme="dark"]) .signature {
@@ -158,11 +158,11 @@
 }
 
 .nameTrigger:is(:hover, :focus-visible) .signatureWritingStroke {
-  animation: writeSignature 2.2s cubic-bezier(0.42, 0, 0.58, 1) both;
+  animation: writeSignature 3s linear both;
 }
 
 .nameTrigger:is(:hover, :focus-visible) + .period {
-  animation: finishSignature 2.2s both;
+  animation: finishSignature 3s both;
 }
 
 @media (hover: none) {
@@ -175,11 +175,11 @@
   }
 
   .nameTrigger:focus .signatureWritingStroke {
-    animation: writeSignature 2.2s cubic-bezier(0.42, 0, 0.58, 1) both;
+    animation: writeSignature 3s linear both;
   }
 
   .nameTrigger:focus + .period {
-    animation: finishSignature 2.2s both;
+    animation: finishSignature 3s both;
   }
 }
 
@@ -558,7 +558,7 @@
 }
 
 @keyframes writeSignature {
-  from { stroke-dashoffset: 760px; }
+  from { stroke-dashoffset: 700px; }
   to { stroke-dashoffset: 0; }
 }
 

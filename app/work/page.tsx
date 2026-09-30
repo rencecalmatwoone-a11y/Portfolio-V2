@@ -43,6 +43,7 @@ export default function WorkPage() {
               <div className={styles.details}>
                 <div className={styles.titleRow}>
                   <h2 id={`${project.slug}-title`}>{project.title}</h2>
+                  {project.status && <span className={styles.status}>{project.status}</span>}
                   <ArrowUpRight className={styles.arrow} size={17} aria-hidden="true" />
                 </div>
                 <p id={`${project.slug}-description`} className={styles.description}>{project.description}</p>

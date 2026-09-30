@@ -5,6 +5,7 @@
 }
 .text { width: 100%; max-width: 38rem; margin-inline: auto; }
 .hero { margin-bottom: var(--space-8); }
+.status { display: inline-flex; padding: 2px 7px; border: 1px solid var(--color-border); border-radius: 999px; color: var(--color-muted); font-size: 0.625rem; line-height: 1.5; }
 .hero h1 { font-size: clamp(1.75rem, 3.5vw, 2.25rem); line-height: 1.2; letter-spacing: -0.035em; text-wrap: balance; }
 .description { max-width: 36rem; }
 .page p { color: var(--color-muted); }

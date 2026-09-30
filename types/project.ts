@@ -24,6 +24,6 @@ export interface Project {
   visuals?: readonly ProjectVisualData[];
   reflection?: string;
   highlights?: readonly string[];
-  status?: "Live";
+  status?: "Live" | "Ongoing";
   image: ProjectImage;
 }

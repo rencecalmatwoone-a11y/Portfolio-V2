@@ -90,9 +90,20 @@
 
 .titleRow h2 {
   margin: 0;
+  flex: 1;
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.4;
+}
+
+.status {
+  flex: 0 0 auto;
+  padding: 2px 7px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
+  border-radius: 999px;
+  color: var(--color-muted);
+  font-size: 0.625rem;
+  line-height: 1.5;
 }
 
 .arrow {
