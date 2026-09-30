@@ -22,13 +22,9 @@ export default function WorkPage() {
       </header>
 
       <section id="all-work" className={styles.projects} aria-label="All projects">
-        {projects.map((project) => (
-          <article key={project.slug} className={styles.project}>
-            <Link
-              href={`/work/${project.slug}`}
-              className={styles.projectLink}
-              aria-labelledby={`${project.slug}-title ${project.slug}-description`}
-            >
+        {projects.map((project) => {
+          const content = (
+            <>
               <div className={styles.imageFrame}>
                 <Image
                   src={project.image.src}
@@ -44,14 +40,30 @@ export default function WorkPage() {
                 <div className={styles.titleRow}>
                   <h2 id={`${project.slug}-title`}>{project.title}</h2>
                   {project.status && <span className={styles.status}>{project.status}</span>}
-                  <ArrowUpRight className={styles.arrow} size={17} aria-hidden="true" />
+                  {project.status !== "Ongoing" && <ArrowUpRight className={styles.arrow} size={17} aria-hidden="true" />}
                 </div>
                 <p id={`${project.slug}-description`} className={styles.description}>{project.description}</p>
                 <p className={styles.metadata}>{project.role ?? project.category}</p>
               </div>
-            </Link>
-          </article>
-        ))}
+            </>
+          );
+
+          return (
+            <article key={project.slug} className={styles.project}>
+              {project.status === "Ongoing" ? (
+                <div className={styles.projectLink}>{content}</div>
+              ) : (
+                <Link
+                  href={`/work/${project.slug}`}
+                  className={styles.projectLink}
+                  aria-labelledby={`${project.slug}-title ${project.slug}-description`}
+                >
+                  {content}
+                </Link>
+              )}
+            </article>
+          );
+        })}
       </section>
     </main>
   );

@@ -28,7 +28,7 @@ export default async function ProjectPage({ params }: Props) {
 
   const visuals = project.visuals ?? [];
   const reflectionPosition = Math.max(1, Math.min(2, visuals.length - 1));
-  const moreProjects = projects.filter((entry) => entry.slug !== slug).slice(0, 3);
+  const moreProjects = projects.filter((entry) => entry.slug !== slug && entry.status !== "Ongoing").slice(0, 3);
 
   return (
     <main className={`page-grid ${styles.page}`}>
