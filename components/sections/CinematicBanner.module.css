@@ -50,6 +50,7 @@
 .grass {
   position: absolute;
   inset: 0;
+  transform-origin: center bottom;
   pointer-events: none;
 }
 
@@ -149,11 +150,11 @@
   }
 
   .midgrass {
-    animation: midwind 9s ease-in-out infinite;
+    animation: midwind 5.5s ease-in-out -1.8s infinite;
   }
 
   .foregrass {
-    animation: foregroundWind 7.5s ease-in-out infinite;
+    animation: foregroundWind 4.2s ease-in-out -0.8s infinite;
   }
 }
 
@@ -182,14 +183,15 @@
 }
 
 @keyframes midwind {
-  0%, 100% { transform: translate(0, 0) rotate(-0.1deg); }
-  50% { transform: translate(2px, -1px) rotate(0.1deg); }
+  0%, 100% { transform: translate(-3px, 0) skewX(-0.8deg); }
+  40% { transform: translate(6px, -2px) skewX(1.4deg); }
+  70% { transform: translate(1px, -0.5px) skewX(0.3deg); }
 }
 
 @keyframes foregroundWind {
-  0%, 100% { transform: translate(0, 0) rotate(-0.2deg); }
-  45% { transform: translate(4px, -1px) rotate(0.2deg); }
-  75% { transform: translate(-3px, 1px) rotate(-0.1deg); }
+  0%, 100% { transform: translate(-5px, 0) skewX(-1.5deg); }
+  40% { transform: translate(10px, -3px) skewX(2.5deg); }
+  70% { transform: translate(2px, -1px) skewX(0.5deg); }
 }
 
 @media (max-width: 600px) {
@@ -227,11 +229,13 @@
 }
 
 @keyframes mobileMidwind {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(1px); }
+  0%, 100% { transform: translate(-2px, 0) skewX(-0.6deg); }
+  40% { transform: translate(4px, -1px) skewX(1deg); }
+  70% { transform: translate(1px, 0) skewX(0.2deg); }
 }
 
 @keyframes mobileForegroundWind {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(2px); }
+  0%, 100% { transform: translate(-3px, 0) skewX(-1deg); }
+  40% { transform: translate(7px, -2px) skewX(1.8deg); }
+  70% { transform: translate(1px, -0.5px) skewX(0.4deg); }
 }
