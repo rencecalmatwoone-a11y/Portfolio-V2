@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { contributionsUrl, github, parseContributions, type ContributionDay } from "@/lib/github";
+import { github, parseContributions, type ContributionDay } from "@/lib/github";
+import savedActivity from "@/data/github-contributions.json";
 import styles from "./GitHubActivity.module.css";
 
 const dayFormat = new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
@@ -65,7 +66,7 @@ function Calendar({ days }: { days: ContributionDay[] }) {
 }
 
 export function GitHubActivity() {
-  const [days, setDays] = useState<ContributionDay[] | null>(null);
+  const [days, setDays] = useState<ContributionDay[]>(() => parseContributions(savedActivity));
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [attempt, setAttempt] = useState(0);
 
@@ -81,10 +82,10 @@ export function GitHubActivity() {
       controller = new AbortController();
       const timeout = window.setTimeout(() => controller?.abort(), 15_000);
       try {
-        const response = await fetch(contributionsUrl, { signal: controller.signal });
+        const response = await fetch("/api/github", { signal: controller.signal });
         if (!response.ok) throw new Error("Activity unavailable");
         const contributions = parseContributions(await response.json());
-        if (active) { setDays(contributions); setStatus("ready"); }
+        if (active) { setDays(contributions); setStatus(response.headers.get("X-Activity-Fallback") === "true" ? "error" : "ready"); }
       } catch {
         if (active) setStatus("error");
       } finally {
@@ -116,16 +117,12 @@ export function GitHubActivity() {
           <span className={styles.githubIcon} aria-hidden="true" /><span>{github.handle}</span><ArrowUpRight size={14} aria-hidden="true" />
         </a>
       </header>
-      {days ? <Calendar key={days[0].date} days={days} /> : (
-        <div className={styles.placeholder} role="status">
-          {status === "loading" ? "Loading contributions…" : "Contributions are temporarily unavailable."}
-        </div>
-      )}
+      <Calendar key={days[0].date} days={days} />
       {status === "error" && <div className={styles.error}>
-        <p role="status">{days ? "Could not refresh. Showing the last available activity." : "You can still view activity on GitHub."}</p>
+        <p role="status">Could not refresh. Showing the last available activity through {dayFormat.format(dateOf(days[days.length - 1]))}.</p>
         <button type="button" onClick={() => { setStatus("loading"); setAttempt((value) => value + 1); }}>Try again</button>
       </div>}
-      <noscript><p className={styles.noScript}>Enable JavaScript to load the calendar, or use the profile link to view activity on GitHub.</p></noscript>
+      <noscript><p className={styles.noScript}>Showing saved activity. View the latest activity using the GitHub profile link.</p></noscript>
     </section>
   );
 }

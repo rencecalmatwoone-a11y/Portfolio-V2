@@ -8,7 +8,7 @@ const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || path.join(tmpdir(), "portfolio-v2-browser-tools/node_modules/playwright"));
 const browser = await chromium.launch({ executablePath: process.env.BROWSER_PATH || "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe", headless: true });
 const baseURL = process.env.BASE_URL || "http://localhost:3196";
-const endpoint = "https://github-contributions-api.jogruber.de/v4/rencecalmatwoone-a11y?y=last";
+const endpoint = `${baseURL}/api/github`;
 const output = path.join(tmpdir(), "portfolio-github-review");
 await mkdir(output, { recursive: true });
 
@@ -61,15 +61,15 @@ try {
   // A failed background refresh keeps the real calendar visible.
   await page.route(endpoint, route => route.fulfill({ status: 503, body: "Unavailable" }));
   await page.clock.fastForward(300_000);
-  await section.getByText("Could not refresh. Showing the last available activity.").waitFor();
+  await section.getByText(/Could not refresh\. Showing the last available activity/).waitFor();
   assert.equal(await days.count(), payload.contributions.length);
 
-  // Invalid data must never appear as a fabricated empty calendar; retry recovers.
+  // A first-load failure keeps the saved real calendar visible; retry recovers.
   const failure = await browser.newPage();
   await failure.route(endpoint, route => route.fulfill({ json: { contributions: [{ date: "2026-02-31", count: 5, level: 2 }] } }));
   await failure.goto(baseURL, { waitUntil: "networkidle" });
-  await failure.getByText("Contributions are temporarily unavailable.").waitFor();
-  assert.equal(await failure.locator("#github button[data-level]").count(), 0);
+  await failure.getByText(/Could not refresh\. Showing the last available activity/).waitFor();
+  assert.equal(await failure.locator("#github button[data-level]").count(), 366);
   await failure.unroute(endpoint);
   await failure.route(endpoint, route => route.fulfill({ json: payload }));
   await failure.getByRole("button", { name: "Try again" }).click();
@@ -78,8 +78,9 @@ try {
   await staticPage.goto(baseURL, { waitUntil: "networkidle" });
   assert.ok(await staticPage.locator("#github").getByRole("link").isVisible());
   assert.ok(await staticPage.locator("#github noscript p").isVisible());
+  assert.equal(await staticPage.locator("#github button[data-level]").count(), 366);
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ liveDays: payload.contributions.length, liveTotal: total, themesAndWidths: 12, keyboard: "passed", refreshFailure: "preserved data", invalidDataAndRetry: "passed", accessibility: "passed", noJavaScript: "profile link", screenshots: output }, null, 2));
+  console.log(JSON.stringify({ liveDays: payload.contributions.length, liveTotal: total, themesAndWidths: 12, keyboard: "passed", refreshFailure: "preserved data", invalidDataAndRetry: "passed", accessibility: "passed", noJavaScript: "saved calendar and profile link", screenshots: output }, null, 2));
 } finally {
   await browser.close();
 }
