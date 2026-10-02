@@ -42,8 +42,12 @@ export function SectionReveals({ children }: { children: ReactNode }) {
       observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           const section = entry.target as HTMLElement;
-          cancel(section);
-          if (!entry.isIntersecting || section.contains(document.activeElement)) return;
+          if (!entry.isIntersecting) return;
+          if (section.contains(document.activeElement)) {
+            cancel(section);
+            return;
+          }
+          if (animations.has(section)) return;
 
           const animation = section.animate([
             { opacity: 0, transform: "translateY(0.9rem)", filter: "blur(0.5px)" },
