@@ -1,6 +1,6 @@
 // Verified against the original portfolio's src/App.jsx (profile and services).
 export const profile = {
-  name: "John Mark Clarence Mendoza",
+  name: "JohnMark Clarence Mendoza",
   preferredName: "Rence",
   roles: ["Front-End Developer", "UI/UX Designer"],
   location: "Cavite, Philippines",
@@ -10,7 +10,7 @@ export const profile = {
   portrait: {
     src: "/images/profile/john-mark-light.png",
     darkSrc: "/images/profile/john-mark-dark.png",
-    alt: "Portrait of John Mark Clarence Mendoza",
+    alt: "Portrait of JohnMark Clarence Mendoza",
     width: 1254,
     height: 1254,
   },

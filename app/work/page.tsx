@@ -7,7 +7,7 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Projects",
-  description: "A collection of interfaces, utilities, and web applications designed and built by John Mark Clarence Mendoza.",
+  description: "A collection of interfaces, utilities, and web applications designed and built by JohnMark Clarence Mendoza.",
 };
 
 export default function WorkPage() {
