@@ -5,7 +5,8 @@ type SkillCategory = {
 };
 
 // Verified against the original portfolio's src/App.jsx skills, services,
-// and project content. See CONTENT_AUDIT.md for the source mapping.
+// and project content, plus user-requested additions. See CONTENT_AUDIT.md
+// for the original source mapping.
 export const skills = [
   {
     id: "front-end",
@@ -20,6 +21,6 @@ export const skills = [
   {
     id: "tools",
     label: "Tools",
-    items: ["Git", "GitHub", "Vercel"],
+    items: ["Git", "GitHub", "Vercel", "Supabase", "VS Code"],
   },
 ] as const satisfies readonly SkillCategory[];

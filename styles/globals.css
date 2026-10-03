@@ -199,6 +199,43 @@ html[data-theme-transition="pixels"]::view-transition-old(root) {
 }
 html[data-theme-transition="pixels"]::view-transition-new(root) {
   z-index: 2;
+  clip-path: inset(0 100% 0 0);
+}
+html[data-theme-transition="pixels"]::view-transition-group(root) {
+  z-index: 1;
+}
+/* Keep both banner scenes live while the same block edge reveals the incoming scene. */
+html:root[data-theme-transition="pixels"][data-theme-scenes-live] [data-car-scene] {
+  visibility: visible;
+  opacity: 1;
+}
+html[data-theme-transition="pixels"] [data-car-scene="light"] {
+  view-transition-name: car-scene-light;
+}
+html[data-theme-transition="pixels"] [data-car-scene="dark"] {
+  view-transition-name: car-scene-dark;
+}
+html[data-theme-transition="pixels"]::view-transition-group(car-scene-light),
+html[data-theme-transition="pixels"]::view-transition-group(car-scene-dark) {
+  animation: none;
+  z-index: 2;
+}
+html[data-theme-transition="pixels"][data-theme="light"]::view-transition-group(car-scene-light),
+html[data-theme-transition="pixels"][data-theme="dark"]::view-transition-group(car-scene-dark) {
+  z-index: 3;
+}
+html[data-theme-transition="pixels"][data-theme-wipe-ready]::view-transition-old(car-scene-light),
+html[data-theme-transition="pixels"][data-theme-wipe-ready]::view-transition-old(car-scene-dark) {
+  display: none;
+}
+html[data-theme-transition="pixels"]::view-transition-new(car-scene-light),
+html[data-theme-transition="pixels"]::view-transition-new(car-scene-dark) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html[data-theme-transition="pixels"][data-theme="light"]::view-transition-new(car-scene-light),
+html[data-theme-transition="pixels"][data-theme="dark"]::view-transition-new(car-scene-dark) {
+  clip-path: inset(0 100% 0 0);
 }
 /* Keep the animated figure out of the frozen outgoing page snapshot. */
 html[data-theme-transition="pixels"] [data-walking-figure] {
@@ -206,7 +243,7 @@ html[data-theme-transition="pixels"] [data-walking-figure] {
 }
 html[data-theme-transition="pixels"]::view-transition-group(walking-figure) {
   animation: none;
-  z-index: 3;
+  z-index: 4;
 }
 html[data-theme-transition="pixels"]::view-transition-old(walking-figure) {
   display: none;

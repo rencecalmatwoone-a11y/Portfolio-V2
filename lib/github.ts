@@ -1,7 +1,7 @@
 import { socials } from "@/data/socials";
 
 export const github = socials.find((social) => social.label === "GitHub")!;
-export const contributionsUrl = `https://github-contributions-api.jogruber.de/v4/${github.handle.slice(1)}?y=last`;
+export const contributionsUrl = `https://github.com/users/${github.handle.slice(1)}/contributions`;
 
 export type ContributionDay = { date: string; count: number; level: number };
 

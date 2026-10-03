@@ -19,6 +19,8 @@ try {
   page.on("pageerror", error => errors.push(error.message));
   const response = await page.request.get(endpoint);
   assert.equal(response.status(), 200);
+  assert.match(response.headers()["cache-control"], /no-store/);
+  assert.notEqual(response.headers()["x-activity-fallback"], "true", "The live GitHub calendar must be available");
   const payload = await response.json();
   await page.goto(baseURL, { waitUntil: "networkidle" });
   const section = page.locator("#github");
@@ -58,11 +60,39 @@ try {
   await page.locator('nav a[href="#github"]').first().click();
   await page.waitForFunction(() => document.querySelector('nav a[href="#github"]')?.getAttribute("aria-current") === "location");
 
-  // A failed background refresh keeps the real calendar visible.
+  // New activity appears after one minute without reloading the page.
+  const updated = structuredClone(payload);
+  updated.contributions.at(-1).count += 7;
+  updated.contributions.at(-1).level = 4;
+  await page.route(endpoint, route => route.fulfill({ json: updated }));
+  await page.clock.fastForward(60_000);
+  await page.waitForFunction(expected => document.querySelector("#github button[data-level]:last-child")?.getAttribute("aria-label")?.startsWith(`${expected} contributions`), updated.contributions.at(-1).count);
+  assert.equal(await days.last().getAttribute("data-level"), "4");
+  assert.ok((await section.innerText()).includes(`${(total + 7).toLocaleString("en")} contributions`));
+  await page.unroute(endpoint);
+
+  // Returning to the tab or reconnecting refreshes immediately, even inside a minute.
+  updated.contributions.at(-1).count += 1;
+  await page.route(endpoint, route => route.fulfill({ json: updated }));
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await page.waitForFunction(expected => document.querySelector("#github button[data-level]:last-child")?.getAttribute("aria-label")?.startsWith(`${expected} contributions`), updated.contributions.at(-1).count);
+  updated.contributions.at(-1).count += 1;
+  await page.evaluate(() => window.dispatchEvent(new Event("online")));
+  await page.waitForFunction(expected => document.querySelector("#github button[data-level]:last-child")?.getAttribute("aria-label")?.startsWith(`${expected} contributions`), updated.contributions.at(-1).count);
+  await page.unroute(endpoint);
+
+  // Neither an HTTP failure nor an older server fallback replaces newer activity.
   await page.route(endpoint, route => route.fulfill({ status: 503, body: "Unavailable" }));
-  await page.clock.fastForward(300_000);
+  await page.clock.fastForward(60_000);
   await section.getByText(/Could not refresh\. Showing the last available activity/).waitFor();
   assert.equal(await days.count(), payload.contributions.length);
+  const latestLabel = await days.last().getAttribute("aria-label");
+  await page.unroute(endpoint);
+  await page.route(endpoint, route => route.fulfill({ json: payload, headers: { "X-Activity-Fallback": "true" } }));
+  await section.getByRole("button", { name: "Try again" }).click();
+  await section.getByText(/Could not refresh\. Showing the last available activity/).waitFor();
+  assert.equal(await days.last().getAttribute("aria-label"), latestLabel);
+  await page.unroute(endpoint);
 
   // A first-load failure keeps the saved real calendar visible; retry recovers.
   const failure = await browser.newPage();
@@ -73,14 +103,15 @@ try {
   await failure.unroute(endpoint);
   await failure.route(endpoint, route => route.fulfill({ json: payload }));
   await failure.getByRole("button", { name: "Try again" }).click();
-  await failure.locator("#github button[data-level]").first().waitFor();
+  await failure.getByText(/Could not refresh\. Showing the last available activity/).waitFor({ state: "hidden" });
+  assert.ok((await failure.locator("#github button[data-level]").last().getAttribute("aria-label")).startsWith(`${payload.contributions.at(-1).count} contribution`));
   const staticPage = await browser.newPage({ javaScriptEnabled: false });
   await staticPage.goto(baseURL, { waitUntil: "networkidle" });
   assert.ok(await staticPage.locator("#github").getByRole("link").isVisible());
   assert.ok(await staticPage.locator("#github noscript p").isVisible());
   assert.equal(await staticPage.locator("#github button[data-level]").count(), 366);
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ liveDays: payload.contributions.length, liveTotal: total, themesAndWidths: 12, keyboard: "passed", refreshFailure: "preserved data", invalidDataAndRetry: "passed", accessibility: "passed", noJavaScript: "saved calendar and profile link", screenshots: output }, null, 2));
+  console.log(JSON.stringify({ liveDays: payload.contributions.length, liveTotal: total, themesAndWidths: 12, keyboard: "passed", minuteRefresh: "updated count and level", focusAndOnline: "immediate refresh", refreshFailure: "preserved newest data", invalidDataAndRetry: "passed", accessibility: "passed", noJavaScript: "saved calendar and profile link", screenshots: output }, null, 2));
 } finally {
   await browser.close();
 }

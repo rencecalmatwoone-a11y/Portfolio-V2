@@ -6,6 +6,7 @@ import { github, parseContributions, type ContributionDay } from "@/lib/github";
 import savedActivity from "@/data/github-contributions.json";
 import styles from "./GitHubActivity.module.css";
 
+const refreshInterval = 60_000;
 const dayFormat = new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
 const dateOf = (day: ContributionDay) => new Date(`${day.date}T00:00:00Z`);
 const describe = (day: ContributionDay) => `${day.count.toLocaleString("en")} contribution${day.count === 1 ? "" : "s"} on ${dayFormat.format(dateOf(day))}`;
@@ -75,17 +76,17 @@ export function GitHubActivity() {
     let inFlight = false;
     let lastStarted = 0;
     let controller: AbortController | undefined;
-    async function load() {
-      if (inFlight || document.visibilityState === "hidden" || Date.now() - lastStarted < 60_000) return;
+    async function load(force = false) {
+      if (inFlight || document.visibilityState === "hidden" || (!force && Date.now() - lastStarted < refreshInterval)) return;
       inFlight = true;
       lastStarted = Date.now();
       controller = new AbortController();
       const timeout = window.setTimeout(() => controller?.abort(), 15_000);
       try {
-        const response = await fetch("/api/github", { signal: controller.signal });
-        if (!response.ok) throw new Error("Activity unavailable");
+        const response = await fetch("/api/github", { cache: "no-store", signal: controller.signal });
+        if (!response.ok || response.headers.get("X-Activity-Fallback") === "true") throw new Error("Activity unavailable");
         const contributions = parseContributions(await response.json());
-        if (active) { setDays(contributions); setStatus(response.headers.get("X-Activity-Fallback") === "true" ? "error" : "ready"); }
+        if (active) { setDays(contributions); setStatus("ready"); }
       } catch {
         if (active) setStatus("error");
       } finally {
@@ -93,9 +94,9 @@ export function GitHubActivity() {
         inFlight = false;
       }
     }
-    void load();
-    const refresh = () => { void load(); };
-    const interval = window.setInterval(refresh, 300_000);
+    void load(true);
+    const refresh = () => { void load(true); };
+    const interval = window.setInterval(() => { void load(); }, refreshInterval);
     document.addEventListener("visibilitychange", refresh);
     window.addEventListener("focus", refresh);
     window.addEventListener("online", refresh);

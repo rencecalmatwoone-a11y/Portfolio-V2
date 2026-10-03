@@ -1,5 +1,10 @@
 // Quantized row edges keep the wipe square-edged throughout the animation.
-export function pixelWipeFrames(width: number, height: number, toDark: boolean): Keyframe[] {
+export function pixelWipeFrames(
+  width: number,
+  height: number,
+  toDark: boolean,
+  origin = { left: 0, top: 0 },
+): Keyframe[] {
   const cell = Math.max(16, Math.round(width / 48));
   const rows = Math.ceil(height / cell);
   const travel = width + height * 0.35 + cell * 8;
@@ -20,6 +25,10 @@ export function pixelWipeFrames(width: number, height: number, toDark: boolean):
       const [x, y] = point.split(" ");
       return `${width - parseFloat(x)}px ${y}`;
     });
-    return { clipPath: `polygon(${polygon.join(",")})`, easing: "steps(1, end)" };
+    const localPolygon = polygon.map(point => {
+      const [x, y] = point.split(" ");
+      return `${parseFloat(x) - origin.left}px ${parseFloat(y) - origin.top}px`;
+    });
+    return { clipPath: `polygon(${localPolygon.join(",")})`, easing: "steps(1, end)" };
   });
 }

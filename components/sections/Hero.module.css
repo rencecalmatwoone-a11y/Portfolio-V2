@@ -141,46 +141,43 @@
 }
 
 .signatureWritingStroke {
-  stroke-dasharray: 700px;
-  stroke-dashoffset: 700px;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
 }
 
 :global(:root[data-theme="dark"]) .signature {
   filter: invert(1);
 }
 
-.nameTrigger:is(:hover, :focus-visible) .nameText {
+.nameTrigger[data-signature-state="writing"] .nameText,
+.nameTrigger[data-signature-state="complete"] .nameText {
   opacity: 0;
 }
 
-.nameTrigger:is(:hover, :focus-visible) .signature {
+.nameTrigger[data-signature-state="writing"] .signature,
+.nameTrigger[data-signature-state="complete"] .signature {
   opacity: 1;
 }
 
-.nameTrigger:is(:hover, :focus-visible) .signatureWritingStroke {
-  animation: writeSignature 3s linear both;
+.nameTrigger[data-signature-state="writing"] .signatureWritingStroke {
+  animation: writeSignature 1.4s linear both;
 }
 
-.nameTrigger:is(:hover, :focus-visible) + .period {
-  animation: finishSignature 3s both;
+.nameTrigger[data-signature-state="complete"] .signatureWritingStroke,
+.nameTrigger[data-signature-state="exiting"] .signatureWritingStroke {
+  stroke-dashoffset: 0;
 }
 
-@media (hover: none) {
-  .nameTrigger:focus .nameText {
-    opacity: 0;
-  }
+.nameTrigger[data-signature-state="writing"] + .period {
+  animation: finishSignature 1.4s both;
+}
 
-  .nameTrigger:focus .signature {
-    opacity: 1;
-  }
+.nameTrigger[data-signature-state="exiting"] .signature {
+  animation: signatureOut 320ms var(--ease-out) both;
+}
 
-  .nameTrigger:focus .signatureWritingStroke {
-    animation: writeSignature 3s linear both;
-  }
-
-  .nameTrigger:focus + .period {
-    animation: finishSignature 3s both;
-  }
+.nameTrigger[data-signature-state="exiting"] .nameText {
+  animation: restoreSignatureName 320ms var(--ease-out) both;
 }
 
 .roles {
@@ -518,14 +515,17 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nameTrigger:is(:hover, :focus-visible) .signatureWritingStroke,
-  .nameTrigger:focus .signatureWritingStroke {
+  .nameTrigger[data-signature-state="writing"] .signatureWritingStroke {
     animation: none;
     stroke-dashoffset: 0;
   }
 
-  .nameTrigger:is(:hover, :focus-visible) + .period,
-  .nameTrigger:focus + .period {
+  .nameTrigger[data-signature-state="writing"] + .period {
+    animation: none;
+  }
+
+  .nameTrigger[data-signature-state="exiting"] .signature,
+  .nameTrigger[data-signature-state="exiting"] .nameText {
     animation: none;
   }
 
@@ -558,11 +558,21 @@
 }
 
 @keyframes writeSignature {
-  from { stroke-dashoffset: 700px; }
+  from { stroke-dashoffset: 1; }
   to { stroke-dashoffset: 0; }
 }
 
 @keyframes finishSignature {
   0%, 87% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes signatureOut {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(0.97); }
+}
+
+@keyframes restoreSignatureName {
+  0%, 15% { opacity: 0; }
   100% { opacity: 1; }
 }

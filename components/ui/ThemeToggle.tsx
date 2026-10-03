@@ -52,19 +52,42 @@ export function ThemeToggle() {
 
 		const root = document.documentElement;
 		root.dataset.themeTransition = "pixels";
-		const transition = document.startViewTransition(applyTheme);
+		const transition = document.startViewTransition(() => {
+			// Expose both live scenes only after the outgoing page has been captured.
+			root.dataset.themeScenesLive = "true";
+			applyTheme();
+		});
 		activeTransition = transition;
+		const wipes: Animation[] = [];
 		try {
 			await transition.ready;
-			root.animate(pixelWipeFrames(window.innerWidth, window.innerHeight, nextTheme === "dark"), {
+			wipes.push(root.animate(pixelWipeFrames(window.innerWidth, window.innerHeight, nextTheme === "dark"), {
 				duration: 850,
 				fill: "both",
 				pseudoElement: "::view-transition-new(root)",
-			});
+			}));
+			// Both car scenes use live layers; reveal the incoming one along the page's block edge.
+			const scene = document.querySelector(`[data-car-scene="${nextTheme}"]`);
+			if (scene) {
+				wipes.push(root.animate(pixelWipeFrames(window.innerWidth, window.innerHeight, nextTheme === "dark", scene.getBoundingClientRect()), {
+					duration: 850,
+					fill: "both",
+					pseudoElement: `::view-transition-new(car-scene-${nextTheme})`,
+				}));
+			}
+			const startTime = document.timeline.currentTime;
+			if (typeof startTime === "number") {
+				wipes.forEach(wipe => { wipe.startTime = startTime; });
+			}
+			// Keep the outgoing capture until its live replacement and both reveals are ready.
+			root.dataset.themeWipeReady = "true";
 		} catch {
 			transition.skipTransition();
 		} finally {
 			await transition.finished.catch(() => {});
+			wipes.forEach(wipe => { wipe.cancel(); });
+			delete root.dataset.themeWipeReady;
+			delete root.dataset.themeScenesLive;
 			delete root.dataset.themeTransition;
 			activeTransition = undefined;
 		}
