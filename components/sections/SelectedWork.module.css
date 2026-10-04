@@ -22,11 +22,13 @@
 .actionRow {
   position: relative;
   display: flex;
-  width: 100vw;
+  width: calc(100% + var(--page-inset) + var(--page-inset));
   justify-content: center;
   margin-top: var(--space-12);
-  margin-inline-start: calc(50% - 50vw);
+  margin-bottom: calc(0px - var(--space-12));
+  margin-inline-start: calc(0px - var(--page-inset));
   padding-block-start: var(--space-8);
+  padding-block-end: var(--space-12);
 }
 
 .actionRow::before {

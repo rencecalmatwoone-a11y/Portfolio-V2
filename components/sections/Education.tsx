@@ -5,7 +5,7 @@ import styles from "./Education.module.css";
 export function Education() {
   return (
     <section id="education" className="page-section" aria-labelledby="education-heading">
-      <header className={`section-heading ${styles.header}`}>
+      <header className={`section-heading ${styles.header}`} data-hover-area>
         <h2 id="education-heading">Education</h2>
       </header>
       {education.map((entry) => (

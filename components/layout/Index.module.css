@@ -21,13 +21,26 @@
 }
 
 .back {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  gap: 6px;
+  width: fit-content;
+  min-height: 32px;
   margin-top: var(--space-3);
   color: var(--color-muted);
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: nowrap;
   text-decoration: none;
+}
+.back svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  /* Match the visible text center, which sits below its line-box center. */
+  transform: translateY(1px);
 }
 .back:hover { color: var(--color-text); }
 .back:focus-visible { outline: 2px solid var(--color-text); outline-offset: 4px; }
@@ -117,6 +130,7 @@
   .actions {
     grid-column: 2;
     grid-row: 2;
+    min-height: 44px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -124,10 +138,7 @@
     gap: 4px;
   }
   .actions :global(button:first-child) {
-    min-height: 44px;
     margin: 0;
-    padding: 8px;
-    width: auto;
   }
   :global(.site-content) { padding-top: calc(6rem + env(safe-area-inset-top)); }
   :global(main > section[id]) { scroll-margin-top: calc(7rem + env(safe-area-inset-top)); }
@@ -144,8 +155,20 @@
 }
 @media (min-width: 48rem) {
   .links { display: block; overflow: visible; padding: 0 0 10px; }
-  .links a { padding: 11px 0 11px 25px; font-size: 13px; }
-  .actions :global(button:last-child) {
+  .links a {
+    padding: 7px 0 7px 12px;
+    font-size: 13px;
+    transition: color 180ms ease, padding-left 180ms ease;
+  }
+  .links a::before {
+    width: 12px;
+    background: var(--color-muted);
+    transform: translateY(-50%) scaleX(0.5);
+  }
+  .links a[aria-current="location"] { padding-left: 24px; font-weight: 500; }
+  .links a[aria-current="location"]::before { transform: translateY(-50%) scaleX(1); }
+  .links a:hover { transform: none; }
+  .actions :global(button[aria-label="Back to top"]) {
     position: absolute;
     top: calc(100% + 20px);
     left: 0;

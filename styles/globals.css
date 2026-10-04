@@ -1,10 +1,16 @@
 @import "tailwindcss";
 
+@theme {
+  --color-background: #ffffff;
+  --color-card-foreground: var(--color-text);
+}
+
 :root {
   color-scheme: light;
   --color-background: #ffffff;
   --color-text: #252a27;
   --color-muted: #626861;
+  --color-section-hover: #fafafa;
   --color-border: #cbcfc5;
   --color-accent: #2f7d52;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -38,6 +44,7 @@
   --color-background: #000000;
   --color-text: #ecece4;
   --color-muted: #acb3ab;
+  --color-section-hover: #0d0d0d;
   --color-border: #454d46;
   --color-accent: #7ecb9d;
   --color-guide-dot: #fff;
@@ -140,6 +147,8 @@ main {
 .page-grid::after {
   content: "";
   position: absolute;
+  /* Keep both side guides above full-width section backgrounds. */
+  z-index: 1;
   inset-block: 0;
   border-inline-start: 1px dotted var(--color-grid);
   pointer-events: none;
@@ -160,6 +169,29 @@ main {
 .section-heading {
   margin-bottom: var(--page-inset);
   padding-bottom: var(--page-inset);
+}
+
+[data-hover-area] {
+  transition: background-color var(--duration-interaction) var(--ease-out);
+}
+
+.section-heading[data-hover-area] {
+  margin-block-start: calc(0px - var(--space-8));
+  margin-inline: calc(0px - var(--page-inset));
+  padding-block-start: var(--space-8);
+  padding-inline: var(--page-inset);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-hover-area]:hover {
+    background-color: var(--color-section-hover);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-hover-area] {
+    transition: none;
+  }
 }
 
 .page-section::before,

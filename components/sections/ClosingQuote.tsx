@@ -19,7 +19,7 @@ export function ClosingQuote() {
 
 	return (
 		<section className={`page-section ${styles.section}`} aria-label="A personal quote">
-			<div className={styles.quoteBand}>
+			<div className={styles.quoteBand} data-hover-area>
 				{!revealed && (
 					<button className={`${styles.revealButton} keycap`} type="button" onClick={() => setRevealed(true)}>
 						Reveal quote

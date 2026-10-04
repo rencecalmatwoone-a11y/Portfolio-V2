@@ -78,6 +78,25 @@ button.day { cursor: pointer; }
 .day[data-level="4"] { background: var(--activity-4); }
 button.day:hover, button.day:focus-visible { outline: 2px solid var(--color-text); outline-offset: 1px; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.tooltip {
+  position: fixed;
+  z-index: 100;
+  display: grid;
+  max-width: calc(100vw - 16px);
+  padding: 6px 9px;
+  border: 1px solid #ffffff26;
+  border-radius: 8px;
+  background: #202522;
+  box-shadow: 0 3px 10px #00000026, inset 0 1px 0 #ffffff0d;
+  color: #edf4ee;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 10px;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.tooltipSizer, .tooltipText { grid-area: 1 / 1; }
+.tooltipSizer { visibility: hidden; }
 .footer { justify-content: flex-start; margin-top: var(--space-2); font-size: 0.75rem; color: var(--color-muted); line-height: 1.6; text-align: left; }
 .footer p, .error p { margin: 0; }
 .footer strong { color: var(--color-text); font-weight: 550; }

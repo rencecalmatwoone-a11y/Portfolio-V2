@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useMemo } from "react";
+import { ArrowLeft } from "lucide-react";
 import { navigation, projectNavigation } from "@/data/navigation";
 import { projects } from "@/data/projects";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -24,7 +25,7 @@ export function SideIndex() {
     <nav className={`${styles.desktop}${project ? ` ${styles.project}` : ""}${archive ? ` ${styles.archive}` : ""}`} aria-label={archive ? "Projects index" : project ? "Project index" : "Section index"}>
       <p className={styles.label}>{archive ? "Projects" : project ? "Project" : ""}</p>
       <IndexLinks active={active} pathname={pathname} items={items} local={archive || pathname === "/" || !!project} />
-      {(archive || project) && <Link href="/#work" className={styles.back}>← Projects</Link>}
+      {(archive || project) && <Link href="/#work" className={styles.back}><ArrowLeft size={16} aria-hidden="true" /><span>Projects</span></Link>}
       {!archive && <div className={styles.actions}>
         <ThemeToggle />
         <BackToTop />

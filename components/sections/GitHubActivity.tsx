@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { createPortal } from "react-dom";
 import { ArrowUpRight } from "lucide-react";
 import { github, parseContributions, type ContributionDay } from "@/lib/github";
 import savedActivity from "@/data/github-contributions.json";
@@ -10,12 +11,63 @@ const refreshInterval = 60_000;
 const dayFormat = new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
 const dateOf = (day: ContributionDay) => new Date(`${day.date}T00:00:00Z`);
 const describe = (day: ContributionDay) => `${day.count.toLocaleString("en")} contribution${day.count === 1 ? "" : "s"} on ${dayFormat.format(dateOf(day))}`;
+const scrambleSymbols = "!<>-_\/[]{}=+*?#";
+const scramble = (text: string, revealed = 0) => Array.from(text, (character, index) =>
+  character === " " || index < revealed ? character : scrambleSymbols[Math.floor(Math.random() * scrambleSymbols.length)]
+).join("");
+
+function ContributionTooltip({ day, anchor }: { day: ContributionDay; anchor: HTMLButtonElement }) {
+  const label = describe(day);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [text, setText] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? label : scramble(label));
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (preference.matches) return;
+    const started = performance.now();
+    const timer = window.setInterval(() => {
+      const progress = Math.min(1, (performance.now() - started) / 520);
+      setText(scramble(label, Math.floor(Math.max(0, (progress - 0.2) / 0.8) * label.length)));
+      if (progress === 1) window.clearInterval(timer);
+    }, 35);
+    const stop = () => {
+      if (preference.matches) { window.clearInterval(timer); setText(label); }
+    };
+    preference.addEventListener("change", stop);
+    return () => { window.clearInterval(timer); preference.removeEventListener("change", stop); };
+  }, [label]);
+
+  useLayoutEffect(() => {
+    const position = () => {
+      const tooltip = tooltipRef.current;
+      if (!tooltip) return;
+      const cell = anchor.getBoundingClientRect();
+      const bounds = tooltip.getBoundingClientRect();
+      const viewport = anchor.parentElement?.parentElement?.getBoundingClientRect();
+      tooltip.style.visibility = viewport && (cell.right < viewport.left || cell.left > viewport.right) ? "hidden" : "visible";
+      tooltip.style.left = `${Math.max(8, Math.min(window.innerWidth - bounds.width - 8, cell.left + cell.width / 2 - bounds.width / 2))}px`;
+      tooltip.style.top = `${cell.top >= bounds.height + 12 ? cell.top - bounds.height - 8 : cell.bottom + 8}px`;
+    };
+    position();
+    window.addEventListener("scroll", position, true);
+    window.addEventListener("resize", position);
+    return () => { window.removeEventListener("scroll", position, true); window.removeEventListener("resize", position); };
+  }, [anchor, label]);
+
+  return createPortal(
+    <div ref={tooltipRef} className={styles.tooltip} aria-hidden="true">
+      <span className={styles.tooltipSizer}>{label}</span>
+      <span className={styles.tooltipText}>{text}</span>
+    </div>, document.body
+  );
+}
 
 function Calendar({ days }: { days: ContributionDay[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
   const [focused, setFocused] = useState(days.length - 1);
   const [selected, setSelected] = useState<number | null>(null);
+  const [selectedAnchor, setSelectedAnchor] = useState<HTMLButtonElement | null>(null);
   const offset = dateOf(days[0]).getUTCDay();
   const weeks = Math.ceil((offset + days.length) / 7);
 
@@ -49,9 +101,11 @@ function Calendar({ days }: { days: ContributionDay[] }) {
               <button key={day.date} ref={(element) => { buttons.current[index] = element; }}
                 type="button" className={styles.day} data-level={day.level}
                 style={{ gridColumn: Math.floor((index + offset) / 7) + 1, gridRow: (index + offset) % 7 + 1, "--cell-index": index } as CSSProperties}
-                tabIndex={focused === index ? 0 : -1} aria-label={describe(day)} title={describe(day)}
-                onFocus={() => { setFocused(index); setSelected(index); }} onBlur={() => setSelected(null)}
-                onClick={() => setSelected(index)} onKeyDown={(event) => navigate(event, index)} />
+                tabIndex={focused === index ? 0 : -1} aria-label={describe(day)}
+                onPointerEnter={(event) => { if (event.pointerType !== "touch") { setSelected(index); setSelectedAnchor(event.currentTarget); } }}
+                onPointerLeave={() => setSelected(null)}
+                onFocus={(event) => { setFocused(index); setSelected(index); setSelectedAnchor(event.currentTarget); }} onBlur={() => setSelected(null)}
+                onClick={(event) => { setSelected(index); setSelectedAnchor(event.currentTarget); }} onKeyDown={(event) => navigate(event, index)} />
             ))}
           </div>
         </div>
@@ -59,6 +113,7 @@ function Calendar({ days }: { days: ContributionDay[] }) {
           <p><strong>{days.reduce((total, day) => total + day.count, 0).toLocaleString("en")}</strong> contributions in the last year</p>
         </div>
       </div>
+      {selected !== null && selectedAnchor && <ContributionTooltip key={`${days[selected].date}-${days[selected].count}`} day={days[selected]} anchor={selectedAnchor} />}
       <span className={styles.srOnly} aria-live="polite" aria-atomic="true">
         {selected === null ? "" : describe(days[selected])}
       </span>
@@ -112,7 +167,7 @@ export function GitHubActivity() {
 
   return (
     <section id="github" className={`page-section ${styles.section}`} aria-labelledby="github-heading">
-      <header className={`section-heading ${styles.header}`}>
+      <header className={`section-heading ${styles.header}`} data-hover-area>
         <h2 id="github-heading">GitHub activity</h2>
         <a href={github.href} target="_blank" rel="noopener noreferrer" className={styles.profile}>
           <span className={styles.githubIcon} aria-hidden="true" /><span>{github.handle}</span><ArrowUpRight size={14} aria-hidden="true" />

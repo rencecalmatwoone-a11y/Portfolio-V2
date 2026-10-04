@@ -3,6 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 import { pixelWipeFrames } from "@/lib/theme-transition";
+import { Switch } from "@/components/ui/switch-button";
 import styles from "./ThemeToggle.module.css";
 
 const THEME_STORAGE_KEY = "portfolio-theme";
@@ -98,21 +99,14 @@ export function ThemeToggle() {
 	}
 
 	return (
-		<button
+		<Switch
 			className={styles.toggle}
-			type="button"
-			role="switch"
-			aria-checked={isDark}
+			value={isDark}
 			aria-label="Dark mode"
-			onClick={toggleTheme}
-		>
-			<span className={styles.icon} aria-hidden="true">
-				{isDark ? <Moon size={14} /> : <Sun size={14} />}
-			</span>
-			<span className={styles.label}>Dark mode</span>
-			<span className={styles.track} aria-hidden="true">
-				<span className={styles.thumb} />
-			</span>
-		</button>
+			title={`Switch to ${isDark ? "light" : "dark"} mode`}
+			onToggle={toggleTheme}
+			iconOn={<Moon className="size-3" strokeWidth={1.75} />}
+			iconOff={<Sun className="size-3" strokeWidth={1.75} />}
+		/>
 	);
 }

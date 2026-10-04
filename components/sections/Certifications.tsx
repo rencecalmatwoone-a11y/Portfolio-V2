@@ -8,7 +8,7 @@ export function Certifications() {
 
   return (
     <section id="certifications" className="page-section" aria-labelledby="certifications-heading">
-      <header className={`section-heading ${styles.header}`}>
+      <header className={`section-heading ${styles.header}`} data-hover-area>
         <h2 id="certifications-heading">Certifications</h2>
         <p>Selected credentials supporting my work in technology and development.</p>
       </header>

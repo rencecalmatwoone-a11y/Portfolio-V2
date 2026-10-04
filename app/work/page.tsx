@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import { projects } from "@/data/projects";
 import styles from "./page.module.css";
@@ -14,7 +14,7 @@ export default function WorkPage() {
   return (
     <main className={`page-grid ${styles.page}`}>
       <header className={styles.header}>
-        <Link href="/#work" className={styles.mobileHome}>← Projects</Link>
+        <Link href="/#work" className={styles.mobileHome}><ArrowLeft size={16} aria-hidden="true" /><span>Projects</span></Link>
         <h1>Projects</h1>
         <p className={styles.intro}>
           A collection of interfaces, utilities, and web applications I’ve designed, developed, and helped shape.

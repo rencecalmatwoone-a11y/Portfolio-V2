@@ -1,0 +1,54 @@
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+const require = createRequire(import.meta.url);
+const { chromium } = require(path.join(tmpdir(), 'portfolio-v2-browser-tools/node_modules/playwright'));
+const browser = await chromium.launch({ executablePath: 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', headless: true });
+try {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://localhost:3000', { waitUntil: 'networkidle' });
+  const days = page.locator('#github button[data-level]');
+  await days.last().scrollIntoViewIfNeeded();
+  await page.waitForTimeout(1500);
+  const tooltip = page.locator('[class*="tooltipText"]');
+  const day = days.nth(340);
+  await day.hover();
+  const label = await day.getAttribute('aria-label');
+  assert.notEqual(await tooltip.textContent(), label);
+  await page.screenshot({ path: '.artifacts/github-tooltip-scramble.png' });
+  await page.waitForTimeout(650);
+  assert.equal(await tooltip.textContent(), label);
+  await page.screenshot({ path: '.artifacts/github-tooltip-desktop.png' });
+  await days.nth(341).hover();
+  await days.nth(342).hover();
+  await page.waitForTimeout(650);
+  assert.equal(await tooltip.textContent(), await days.nth(342).getAttribute('aria-label'));
+  await page.mouse.move(0, 0);
+  assert.equal(await tooltip.count(), 0);
+  await days.last().focus();
+  await page.keyboard.press('ArrowLeft');
+  await page.waitForTimeout(650);
+  assert.equal(await tooltip.textContent(), await days.nth(await days.count() - 8).getAttribute('aria-label'));
+  await page.keyboard.press('Escape');
+  assert.equal(await tooltip.count(), 0);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await days.nth(335).focus();
+  assert.equal(await tooltip.textContent(), await days.nth(335).getAttribute('aria-label'));
+  for (const theme of ['light', 'dark']) {
+    await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme);
+    await page.setViewportSize({ width: 320, height: 812 });
+    await days.last().focus();
+    await days.last().scrollIntoViewIfNeeded();
+    const box = await tooltip.boundingBox();
+    assert(box.x >= 0 && box.x + box.width <= 320, `Tooltip fits ${theme}: ${JSON.stringify(box)}`);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+    await page.screenshot({ path: `.artifacts/github-tooltip-${theme}-mobile.png` });
+    await page.keyboard.press('Escape');
+    await days.nth(335).focus();
+  }
+  assert.deepEqual(errors, []);
+  console.log('PASS: scramble, reveal, rapid hover, dismissal, keyboard navigation, reduced motion, mobile bounds in both themes; no browser errors.');
+} finally { await browser.close(); }

@@ -7,7 +7,7 @@ import styles from "./SelectedWork.module.css";
 export function SelectedWork() {
   return (
     <section id="work" className="page-section" aria-labelledby="projects-heading">
-      <header className={`section-heading ${styles.header}`}>
+      <header className={`section-heading ${styles.header}`} data-hover-area>
         <h2 id="projects-heading">Projects</h2>
         <p>A selection of interfaces and websites I’ve designed and built.</p>
       </header>
@@ -16,7 +16,7 @@ export function SelectedWork() {
           <ProjectCard key={project.slug} project={project} />
         ))}
       </div>
-      <div className={styles.actionRow}>
+      <div className={styles.actionRow} data-hover-area>
         <Link href="/work" className={`${styles.viewAll} keycap`}>
           View All <ArrowUpRight size={14} aria-hidden="true" />
         </Link>

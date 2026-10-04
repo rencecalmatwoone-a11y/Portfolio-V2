@@ -9,7 +9,6 @@
   inset-block-start: 0;
   inset-inline: calc(0px - var(--page-inset));
   height: calc(var(--hero-content-start) - 1rem + 4px);
-  border-inline-start: 1px dotted var(--color-grid);
   background-color: var(--color-background);
   pointer-events: none;
 }

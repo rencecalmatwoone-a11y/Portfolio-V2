@@ -45,7 +45,7 @@ try {
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${slug}/${theme}/${width} overflow`);
         assert.equal(await index.locator("ul").isVisible(), width >= 768);
         assert.equal(await index.evaluate(el => getComputedStyle(el).position), width >= 768 ? "fixed" : "static");
-        assert.ok(await index.getByRole("link", { name: "← Projects", exact: true }).isVisible());
+        assert.ok(await index.getByRole("link", { name: "Projects", exact: true }).isVisible());
         assert.ok(await index.getByRole("switch", { name: "Dark mode" }).isVisible());
         if (width >= 768) {
           assert.ok((await page.locator("main").boundingBox()).x >= (await index.boundingBox()).x + (await index.boundingBox()).width, "Index does not overlap page");
@@ -76,7 +76,7 @@ try {
   await page.goto(`${baseURL}/work/ratioflow`, { waitUntil: "networkidle" });
   await page.locator('[aria-labelledby="more-projects-heading"] a').first().click();
   await page.waitForURL("**/work/tutoyhub");
-  await page.getByRole("link", { name: "← Projects", exact: true }).click();
+  await page.getByRole("link", { name: "Projects", exact: true }).click();
   await page.waitForURL("**/#work");
   assert.equal(await page.getByRole("navigation", { name: "Section index" }).isVisible(), true);
   assert.deepEqual(await page.locator("#work article > a").evaluateAll(es => es.map(e => e.getAttribute("href"))), slugs.map(s => `/work/${s}`));
@@ -86,7 +86,7 @@ try {
   await staticPage.goto(`${baseURL}/work/ratioflow`, { waitUntil: "networkidle" });
   assert.equal(await staticPage.locator("h1").innerText(), "RatioFlow");
   assert.equal(await staticPage.locator("main figure").count(), 2);
-  assert.ok(await staticPage.getByRole("link", { name: "← Projects", exact: true }).isVisible());
+  assert.ok(await staticPage.getByRole("link", { name: "Projects", exact: true }).isVisible());
   assert.deepEqual(errors, []);
   console.log(JSON.stringify({ responsiveChecks: results.length, routes: "passed including legacy redirect and 404", navigation: "keyboard, active sections, related projects, homepage return passed", accessibility: "automated WCAG A/AA checks passed", noJavaScript: "passed", screenshots: output, browserErrors: errors }, null, 2));
 } finally {
