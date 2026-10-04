@@ -1,5 +1,6 @@
 .track {
   --figure-size: clamp(48px, 7vw, 76px);
+  --figure-width: var(--figure-size);
   --walk-duration: 14s;
   --stand-duration: 1.8s;
   position: absolute;
@@ -9,8 +10,25 @@
   pointer-events: none;
 }
 
+.track[data-variant="gif"] {
+  --figure-size: var(--quote-band-height, 10rem);
+  --figure-width: calc(var(--figure-size) * 380 / 300);
+  position: absolute;
+  z-index: 2;
+  inset-block: calc(var(--figure-size) / 2) auto;
+  inset-inline: 50% auto;
+  width: var(--figure-width);
+  transform: translate(-50%, -50%);
+}
+
+.track[data-variant="gif"] :is(.runway, .traveler) {
+  width: 100%;
+  animation: none;
+  transform: none;
+}
+
 .runway {
-  width: calc(100% - var(--figure-size));
+  width: calc(100% - var(--figure-width));
   height: 100%;
 }
 
@@ -24,7 +42,7 @@
 .figure {
   display: block;
   position: relative;
-  width: var(--figure-size);
+  width: var(--figure-width);
   height: var(--figure-size);
   padding: 0;
   border: 0;
@@ -35,7 +53,14 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.figure::before {
+.sprite,
+.still {
+  display: block;
+  width: var(--figure-width);
+  height: var(--figure-size);
+}
+
+.track[data-variant="walker"] .figure::before {
   content: "";
   position: absolute;
   left: 28%;
@@ -48,11 +73,8 @@
   filter: blur(2px);
 }
 
-.sprite,
+.pose,
 .still {
-  display: block;
-  width: var(--figure-size);
-  height: var(--figure-size);
   background-image: url("/images/hero/walking-figure.webp");
   background-size: 300% 200%;
   background-repeat: no-repeat;
@@ -60,8 +82,35 @@
 
 .sprite {
   position: relative;
-  animation: stride 840ms step-end infinite;
+  isolation: isolate;
+}
+
+.pose {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  mix-blend-mode: plus-lighter;
+  animation: stride var(--stride-duration) linear infinite;
   animation-play-state: paused;
+}
+
+.track[data-variant="gif"] :is(.sprite, .still) {
+  z-index: 2;
+  background-image: url("/images/hero/download-still.webp");
+  background-size: contain;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.track[data-variant="gif"] .figure {
+  pointer-events: none;
+}
+
+/* Native GIFs cannot be paused with animation-play-state. Use its first frame
+   during user pauses and reduced motion. */
+.track[data-variant="gif"][data-running="true"] .sprite {
+  background-image: url("/images/hero/download.gif");
 }
 
 .still {
@@ -140,13 +189,17 @@
 }
 
 .track[data-running="true"] .traveler,
-.track[data-running="true"] .sprite {
+.track[data-running="true"] .pose {
   animation-play-state: running;
 }
 
-.track[data-phase^="stand"] .sprite {
+.track[data-phase^="stand"] .pose {
   animation: none;
-  background-position: 50% 0;
+  opacity: 0;
+}
+
+.track[data-phase^="stand"] .pose:first-child {
+  opacity: 1;
 }
 
 .track[data-phase="stand-right"] .traveler {
@@ -192,18 +245,14 @@
 }
 
 @keyframes stride {
-  0% { background-position: 0 0; }
-  16.6667% { background-position: 50% 0; }
-  33.3333% { background-position: 100% 0; }
-  50% { background-position: 0 100%; }
-  66.6667% { background-position: 50% 100%; }
-  83.3333% { background-position: 100% 100%; }
+  0%, 8.333333%, 100% { opacity: 1; }
+  16.666667%, 91.666667% { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .runway { display: none; }
   .traveler,
-  .sprite { animation: none; }
+  .pose { animation: none; }
   .still { display: block; }
   .bubble { transition: none; }
 }

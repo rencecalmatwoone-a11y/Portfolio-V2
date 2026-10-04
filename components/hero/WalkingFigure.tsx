@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import styles from "./WalkingFigure.module.css";
 
 const phases = ["walk-right", "stand-right", "walk-left", "stand-left"] as const;
+const strideDuration = 720;
+const strideFrames = ["50% 0", "100% 0", "0 100%", "50% 100%", "100% 100%", "0 0"];
 
-export function WalkingFigure() {
+export function WalkingFigure({ variant = "walker" }: { variant?: "walker" | "gif" }) {
+  const isWalker = variant === "walker";
   const trackRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -20,7 +23,6 @@ export function WalkingFigure() {
     const tooltip = figure.querySelector<HTMLElement>('[role="tooltip"]');
     if (!track || !tooltip) return;
     const width = Math.min(240, track.width);
-    const gap = 4;
     const side = "top";
     const left = Math.max(track.left - bounds.left, Math.min((bounds.width - width) / 2, track.right - bounds.left - width));
     tooltip.dataset.side = side;
@@ -30,6 +32,7 @@ export function WalkingFigure() {
   };
 
   const showBubble = (figure: HTMLElement) => {
+    if (!isWalker) return;
     positionBubble(figure);
     setActiveFigure(figure);
     setDismissed(false);
@@ -63,38 +66,46 @@ export function WalkingFigure() {
       updateVisibility();
     });
     // Keep the same walking speed across desktop and mobile track widths.
-    const resize = new ResizeObserver(() => {
+    const resize = isWalker ? new ResizeObserver(() => {
       const figureSize = parseFloat(getComputedStyle(track).height);
-      const distance = Math.max(0, track.clientWidth - figureSize);
-      track.style.setProperty("--walk-duration", `${distance / (figureSize * 0.65)}s`);
-    });
+      const figureWidth = track.querySelector("button")?.offsetWidth ?? figureSize;
+      const distance = Math.max(0, track.clientWidth - figureWidth);
+      const strideSeconds = strideDuration / 1000;
+      const strides = Math.max(1, Math.round(distance / (figureSize * 0.65 * strideSeconds)));
+      const duration = strides * strideSeconds;
+      track.style.setProperty("--walk-duration", `${duration}s`);
+    }) : undefined;
 
     intersection.observe(track);
-    resize.observe(track);
+    resize?.observe(track);
     document.addEventListener("visibilitychange", updateVisibility);
     return () => {
       intersection.disconnect();
-      resize.disconnect();
+      resize?.disconnect();
       document.removeEventListener("visibilitychange", updateVisibility);
     };
-  }, []);
+  }, [isWalker]);
 
   const running = visible && !paused;
-  const label = paused ? "Resume walking animation" : "Pause walking animation";
+  const label = `${paused ? "Resume" : "Pause"} ${isWalker ? "walking" : "GIF"} animation`;
 
   return (
     <div
       ref={trackRef}
       className={styles.track}
-      data-walking-figure
+      style={{ "--stride-duration": `${strideDuration}ms` } as CSSProperties}
+      data-walking-figure={isWalker ? "" : undefined}
+      data-quote-gif={!isWalker ? "" : undefined}
+      data-variant={variant}
+      aria-hidden={isWalker ? undefined : true}
       data-running={running}
-      data-phase={phases[phase]}
+      data-phase={isWalker ? phases[phase] : undefined}
     >
       <div className={styles.runway}>
         <div
           className={styles.traveler}
           onAnimationEnd={(event) => {
-            if (event.target === event.currentTarget) {
+            if (isWalker && event.target === event.currentTarget) {
               setPhase((value) => (value + 1) % phases.length);
             }
           }}
@@ -103,7 +114,8 @@ export function WalkingFigure() {
             type="button"
             className={styles.figure}
             aria-label={label}
-            aria-describedby={bubbleId}
+            aria-describedby={isWalker ? bubbleId : undefined}
+            tabIndex={isWalker ? undefined : -1}
             onPointerEnter={(event) => showBubble(event.currentTarget)}
             onPointerLeave={(event) => { if (document.activeElement !== event.currentTarget) setActiveFigure(null); }}
             onFocus={(event) => showBubble(event.currentTarget)}
@@ -111,24 +123,35 @@ export function WalkingFigure() {
             onKeyDown={(event) => { if (event.key === "Escape") setDismissed(true); }}
             onClick={() => setPaused((value) => !value)}
           >
-            <span className={styles.sprite} aria-hidden="true" />
-            {bubble(bubbleId)}
+            <span className={styles.sprite} aria-hidden="true">
+              {isWalker && strideFrames.map((position, index) => (
+                <span
+                  key={position}
+                  className={styles.pose}
+                  style={{
+                    backgroundPosition: position,
+                    animationDelay: `${((index - strideFrames.length) % strideFrames.length) * strideDuration / strideFrames.length}ms`,
+                  }}
+                />
+              ))}
+            </span>
+            {isWalker && bubble(bubbleId)}
           </button>
         </div>
       </div>
       <span
         className={styles.still}
         role="img"
-        aria-label="Walking figure"
-        aria-describedby={`${bubbleId}-still`}
-        tabIndex={0}
+        aria-label={isWalker ? "Walking figure" : "Fighting game characters"}
+        aria-describedby={isWalker ? `${bubbleId}-still` : undefined}
+        tabIndex={isWalker ? 0 : undefined}
         onPointerEnter={(event) => showBubble(event.currentTarget)}
         onPointerLeave={(event) => { if (document.activeElement !== event.currentTarget) setActiveFigure(null); }}
         onFocus={(event) => showBubble(event.currentTarget)}
         onBlur={(event) => { if (!event.currentTarget.matches(":hover")) setActiveFigure(null); }}
         onKeyDown={(event) => { if (event.key === "Escape") setDismissed(true); }}
       >
-        {bubble(`${bubbleId}-still`)}
+        {isWalker && bubble(`${bubbleId}-still`)}
       </span>
     </div>
   );

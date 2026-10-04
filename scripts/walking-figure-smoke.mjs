@@ -21,6 +21,8 @@ try {
   const track = page.locator("[data-walking-figure]");
   const button = track.getByRole("button");
   const sprite = button.locator('span[aria-hidden="true"]');
+  const poses = sprite.locator(":scope > span");
+  const poseOpacities = () => poses.evaluateAll((elements) => elements.map((el) => getComputedStyle(el).opacity));
   const bubble = button.getByRole("tooltip", { includeHidden: true });
   const traveler = button.locator("..");
 
@@ -33,14 +35,14 @@ try {
     assert.ok(trackBounds.y >= socialBounds.y + socialBounds.height, `Social overlap at ${width}`);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);
     assert.equal((await page.request.get(`${baseURL}/images/hero/walking-figure.webp`)).status(), 200);
+    assert.match(await poses.first().evaluate((el) => getComputedStyle(el).backgroundImage), /walking-figure\.webp/, "Hero uses the original walking figure");
 
     await traveler.evaluate((el) => { el.getAnimations()[0].currentTime = 0; });
     const start = await button.boundingBox();
     assert.ok(Math.abs(start.x - trackBounds.x) < 4, "Begins at left corner");
-    const before = await sprite.evaluate((el) => getComputedStyle(el).backgroundPosition);
+    const before = await poseOpacities();
     await page.waitForTimeout(190);
-    const after = await sprite.evaluate((el) => getComputedStyle(el).backgroundPosition);
-    assert.notEqual(before, after, "Leg frames advance");
+    assert.notDeepEqual(before, await poseOpacities(), "Leg poses advance");
     assert.ok((await button.boundingBox()).x > start.x, "Walks toward the right");
 
     // DOM click avoids Playwright waiting for an animated target to stop moving.
@@ -48,8 +50,10 @@ try {
     await page.waitForFunction(() => document.querySelector("[data-walking-figure]").dataset.running === "false");
     await traveler.evaluate(async (el) => { await Promise.all(el.getAnimations().map((animation) => animation.ready)); });
     const pausedX = (await button.boundingBox()).x;
+    const pausedPoses = await poseOpacities();
     await page.waitForTimeout(220);
     assert.equal((await button.boundingBox()).x, pausedX, "Pause holds position");
+    assert.deepEqual(await poseOpacities(), pausedPoses, "Pause holds the blended pose");
     await button.focus();
     await page.waitForTimeout(180);
     assert.equal(await bubble.isVisible(), true, "Keyboard focus reveals the speech bubble");
@@ -106,7 +110,8 @@ try {
     await sprite.evaluate((el) => getComputedStyle(el).animationName);
     const end = await button.boundingBox();
     assert.ok(Math.abs(end.x + end.width - trackBounds.x - trackBounds.width) < 1, "Ends at right corner");
-    assert.equal(await sprite.evaluate((el) => el.getAnimations().length), 0, "Stops stepping at destination");
+    assert.equal(await sprite.evaluate((el) => el.getAnimations({ subtree: true }).length), 0, "Stops stepping at destination");
+    assert.deepEqual(await poseOpacities(), ["1", "0", "0", "0", "0", "0"], "Rests in the stride's starting pose");
     assert.equal(await traveler.evaluate((el) => el.getAnimations()[0].effect.getTiming().duration), 1800, "Stands for 1.8 seconds");
     await page.waitForTimeout(200);
     assert.deepEqual(await button.boundingBox(), end, "Stands still at right corner");
@@ -124,7 +129,7 @@ try {
     await sprite.evaluate((el) => getComputedStyle(el).animationName);
     const leftEnd = await button.boundingBox();
     assert.ok(Math.abs(leftEnd.x - resizedTrack.x) < 1, "Returns exactly to left corner");
-    assert.equal(await sprite.evaluate((el) => el.getAnimations().length), 0, "Stops stepping at left corner");
+    assert.equal(await sprite.evaluate((el) => el.getAnimations({ subtree: true }).length), 0, "Stops stepping at left corner");
     // User pause also freezes the rest countdown, with no delayed turnaround.
     await button.click();
     await page.waitForTimeout(1900);
@@ -149,6 +154,7 @@ try {
   assert.equal(await button.isVisible(), false, "Reduced motion has no inactive animation control");
   const still = track.locator(":scope > span");
   assert.equal(await still.isVisible(), true);
+  assert.match(await still.evaluate((el) => getComputedStyle(el).backgroundImage), /walking-figure\.webp/, "Reduced motion uses the original walking figure");
   const stillBounds = await still.boundingBox();
   await page.waitForTimeout(200);
   assert.deepEqual(await still.boundingBox(), stillBounds, "Reduced motion figure stays still");

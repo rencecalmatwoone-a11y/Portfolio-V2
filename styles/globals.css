@@ -278,14 +278,20 @@ html[data-theme-transition="pixels"][data-theme="dark"]::view-transition-new(car
 html[data-theme-transition="pixels"] [data-walking-figure] {
   view-transition-name: walking-figure;
 }
-html[data-theme-transition="pixels"]::view-transition-group(walking-figure) {
+html[data-theme-transition="pixels"] [data-quote-gif] {
+  view-transition-name: quote-gif;
+}
+html[data-theme-transition="pixels"]::view-transition-group(walking-figure),
+html[data-theme-transition="pixels"]::view-transition-group(quote-gif) {
   animation: none;
   z-index: 4;
 }
-html[data-theme-transition="pixels"]::view-transition-old(walking-figure) {
+html[data-theme-transition="pixels"]::view-transition-old(walking-figure),
+html[data-theme-transition="pixels"]::view-transition-old(quote-gif) {
   display: none;
 }
-html[data-theme-transition="pixels"]::view-transition-new(walking-figure) {
+html[data-theme-transition="pixels"]::view-transition-new(walking-figure),
+html[data-theme-transition="pixels"]::view-transition-new(quote-gif) {
   animation: none;
   mix-blend-mode: normal;
 }

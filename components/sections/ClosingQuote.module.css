@@ -8,6 +8,7 @@
 
 .quoteBand {
   position: relative;
+  isolation: isolate;
   display: grid;
   min-height: var(--quote-band-height);
   flex: 0 0 auto;
@@ -30,6 +31,8 @@
 }
 
 .quote {
+  position: relative;
+  z-index: 1;
   width: min(100%, 34rem);
   margin: 0;
 }
@@ -63,6 +66,8 @@
 }
 
 .revealButton {
+  position: relative;
+  z-index: 1;
   min-height: 40px;
   padding: 0.625rem 1rem;
   font: inherit;
