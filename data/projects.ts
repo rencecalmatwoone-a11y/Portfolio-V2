@@ -122,21 +122,20 @@ export const projects: readonly Project[] = [
     slug: "my-island-surprises",
     title: "My Island Surprises",
     description:
-      "I'm redesigning my client's entire website with Next.js, TypeScript, and Tailwind CSS, bringing its design and experience up to date.",
+      "I redesigned pages of my client's website to improve its overall visual appeal, layout, usability, and user experience while maintaining the brand's original identity and design direction.",
     category: "Wellness website",
     technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
     featured: true,
     order: 4,
-    liveUrl: "https://www.myislandsurprises.com/",
-    status: "Ongoing",
+    status: "NDA",
     overview: [
-      "My Island Surprises is a website focused on spiritual growth and holistic well-being. I'm redesigning the entire website with Next.js, bringing its design and experience up to date.",
+      "My Island Surprises is a website focused on spiritual growth and holistic well-being. I'm redesigning some pages with Next.js, bringing its design and experience up to date.",
     ],
     image: {
-      src: "/images/projects/my-island-surprises-homepage.webp",
-      alt: "My Island Surprises homepage with island navigation, a jungle hero, and the start of the It's All About You section.",
+      src: "/images/projects/Screenshot 2026-10-04 163655.png",
+      alt: "My Island Surprises homepage with a tropical island hero, waterfall, and navigation.",
       width: 1349,
-      height: 636,
+      height: 634,
     },
   },
 ];
