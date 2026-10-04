@@ -1,9 +1,9 @@
 import { notFound, permanentRedirect } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import { ProjectVisual } from "@/components/projects/ProjectVisual";
+import { MoreProjects } from "@/components/projects/MoreProjects";
 import { skillIcons } from "@/data/skill-icons";
 import { projects } from "@/data/projects";
 import styles from "./page.module.css";
@@ -82,16 +82,7 @@ export default async function ProjectPage({ params }: Props) {
       {!!moreProjects.length && (
         <section className={`${styles.text} ${styles.section}`} aria-labelledby="more-projects-heading">
           <h2 id="more-projects-heading">More Projects</h2>
-          <ul className={styles.moreProjects}>
-            {moreProjects.map((entry) => (
-              <li key={entry.slug}>
-                <Link href={`/work/${entry.slug}`}>
-                  <span><span className={styles.projectTitle}>{entry.title}</span><span className={styles.category}>{entry.category}</span></span>
-                  <ArrowRight size={18} aria-hidden="true" />
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <MoreProjects projects={moreProjects} />
         </section>
       )}
     </main>

@@ -21,6 +21,6 @@ export const skills = [
   {
     id: "tools",
     label: "Tools",
-    items: ["Git", "GitHub", "Vercel", "Supabase", "VS Code"],
+    items: ["Git", "GitHub", "Vercel", "Supabase", "VS Code", "Codex"],
   },
 ] as const satisfies readonly SkillCategory[];
