@@ -6,11 +6,10 @@
 .section::after {
   position: absolute;
   z-index: 4;
-  inset-block-start: calc(clamp(200px, 28vw, 260px) - 4px);
+  inset-block-start: clamp(200px, 28vw, 260px);
   inset-inline: -100vw;
-  height: 8px;
-  background:
-    repeating-linear-gradient(90deg, var(--color-grid) 0 1px, transparent 1px 3px) center / 100% 1px no-repeat;
+  height: 0;
+  border-block-start: 1px dotted var(--color-grid);
   content: "";
   pointer-events: none;
 }
