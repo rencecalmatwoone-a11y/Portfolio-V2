@@ -100,6 +100,11 @@
   background-size: contain;
   background-position: center bottom;
   background-repeat: no-repeat;
+  /* Feather the encoded frame edges so character entrances blend naturally. */
+  mask-image:
+    linear-gradient(to right, transparent, #000 10%, #000 90%, transparent),
+    linear-gradient(to bottom, transparent, #000 6%, #000 96%, transparent);
+  mask-composite: intersect;
   pointer-events: none;
 }
 
