@@ -204,10 +204,16 @@ html[data-theme-transition="pixels"]::view-transition-new(root) {
 html[data-theme-transition="pixels"]::view-transition-group(root) {
   z-index: 1;
 }
-/* Keep both banner scenes live while the same block edge reveals the incoming scene. */
-html:root[data-theme-transition="pixels"][data-theme-scenes-live] [data-car-scene] {
+/* Expose both scenes only while the native overlay covers the underlying page. */
+html:root:active-view-transition[data-theme-transition="pixels"][data-theme-scenes-live] [data-car-scene] {
   visibility: visible;
   opacity: 1;
+}
+@supports not selector(:active-view-transition) {
+  html:root[data-theme-transition="pixels"][data-theme-scenes-live] [data-car-scene] {
+    visibility: visible;
+    opacity: 1;
+  }
 }
 html[data-theme-transition="pixels"] [data-car-scene="light"] {
   view-transition-name: car-scene-light;

@@ -81,9 +81,13 @@ export function ThemeToggle() {
 			}
 			// Keep the outgoing capture until its live replacement and both reveals are ready.
 			root.dataset.themeWipeReady = "true";
+			await Promise.all(wipes.map(wipe => wipe.finished));
 		} catch {
+			delete root.dataset.themeScenesLive;
 			transition.skipTransition();
 		} finally {
+			// Restore scene visibility before the overlay releases the underlying page.
+			delete root.dataset.themeScenesLive;
 			await transition.finished.catch(() => {});
 			wipes.forEach(wipe => { wipe.cancel(); });
 			delete root.dataset.themeWipeReady;
