@@ -135,7 +135,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
-    gap: 4px;
+    gap: 12px;
   }
   .actions :global(button:first-child) {
     margin: 0;

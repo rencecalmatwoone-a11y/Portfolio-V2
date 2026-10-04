@@ -295,7 +295,7 @@ try {
           dim: getComputedStyle(dim).animationName,
           glow: getComputedStyle(glow).animationName,
           guidelineAligned: Math.abs(Number.parseFloat(getComputedStyle(section, "::after").top)
-            - (sceneBounds.top - sectionBounds.top + sceneBounds.height - 4)) < 1,
+            - (sceneBounds.bottom - sectionBounds.top)) < 1,
           cornerBlend: [...element.querySelectorAll("[data-car-scene]")].map((layer) => getComputedStyle(layer, "::after").backgroundImage),
           sunsetRays: getComputedStyle(light.lastElementChild).backgroundImage,
           rayMask: getComputedStyle(light.lastElementChild).maskImage,

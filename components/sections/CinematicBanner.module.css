@@ -6,7 +6,7 @@
 .section::after {
   position: absolute;
   z-index: 4;
-  inset-block-start: clamp(200px, 28vw, 260px);
+  inset-block-start: 100%;
   inset-inline: -100vw;
   height: 0;
   border-block-start: 1px dotted var(--color-grid);
@@ -342,10 +342,6 @@
 }
 
 @media (max-width: 600px) {
-  .section::after {
-    inset-block-start: calc(clamp(155px, 47vw, 190px) - 4px);
-  }
-
   .scene {
     height: clamp(155px, 47vw, 190px);
   }
