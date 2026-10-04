@@ -132,10 +132,10 @@ export const projects: readonly Project[] = [
       "My Island Surprises is a website focused on spiritual growth and holistic well-being. I'm redesigning some pages with Next.js, bringing its design and experience up to date.",
     ],
     image: {
-      src: "/images/projects/Screenshot 2026-10-04 163655.png",
-      alt: "My Island Surprises homepage with a tropical island hero, waterfall, and navigation.",
-      width: 1349,
-      height: 634,
+      src: "/images/projects/Island Website Redesign Comparison.png",
+      alt: "Side-by-side comparison of the original and redesigned My Island Surprises homepage.",
+      width: 1672,
+      height: 941,
     },
   },
 ];
