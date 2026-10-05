@@ -135,6 +135,7 @@
   width: 2.4em;
   height: 1.82em;
   opacity: 0;
+  color: #000;
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
@@ -145,7 +146,7 @@
 }
 
 :global(:root[data-theme="dark"]) .signature {
-  filter: invert(1);
+  color: #fff;
 }
 
 .nameTrigger[data-signature-state="writing"] .nameText,

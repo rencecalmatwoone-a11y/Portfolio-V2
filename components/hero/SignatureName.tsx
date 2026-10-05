@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "@/components/sections/Hero.module.css";
 
 type SignatureState = "idle" | "writing" | "complete" | "exiting";
@@ -8,7 +8,6 @@ type SignatureState = "idle" | "writing" | "complete" | "exiting";
 const signatureHold = 220;
 
 export function SignatureName({ name }: { name: string }) {
-  const maskId = useId();
   const [state, setState] = useState<SignatureState>("idle");
   const hovered = useRef(false);
   const focused = useRef(false);
@@ -82,36 +81,34 @@ export function SignatureName({ name }: { name: string }) {
             if (event.target === event.currentTarget) setState("idle");
           }}
         >
-          <defs>
-            <mask
-              id={maskId}
-              x="231"
-              y="9"
-              width="233"
-              height="177"
-              maskUnits="userSpaceOnUse"
-            >
-              <polyline
-                className={styles.signatureWritingStroke}
-                points="245,154 255,151 270,145 285,136 302,124 319,111 335,101 336,91 341,78 348,63 357,47 368,32 378,22 383,20 387,24 387,31 382,42 375,54 365,67 350,84 336,101 335,110 340,120 348,129 360,139 372,149 377,156 376,161 368,167 354,171 338,174 326,173 318,169 315,162 318,154 325,144 335,134 349,122 365,111 385,99 406,88 402,96 395,108 389,120 385,130 388,133 396,132 407,127 419,119 429,113 433,114 438,121 442,126 446,124 450,115"
-                pathLength="1"
-                fill="none"
-                stroke="white"
-                strokeWidth="10"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                onAnimationEnd={() => {
-                  setState("complete");
-                  restoreName();
-                }}
-              />
-            </mask>
-          </defs>
-          <image
-            href="/images/hero/rence-signature.png"
-            width="818"
-            height="198"
-            mask={`url(#${maskId})`}
+          {/* Draw the ink itself so crossing strokes cannot appear ahead of the pen. */}
+          <path
+            className={styles.signatureWritingStroke}
+            d="M245 154
+              C273 149 308 125 335 103
+              C335 80 357 45 375 26
+              C382 19 386 20 387 25
+              C391 43 368 75 335 103
+              C333 121 355 133 370 148
+              C377 154 380 158 373 163
+              C365 169 331 177 320 172
+              C311 168 313 157 322 147
+              C337 130 378 103 405 89
+              C399 98 392 113 387 124
+              C384 129 384 133 390 132
+              C403 130 416 120 426 114
+              C431 111 433 118 437 123
+              C441 131 445 123 449 115"
+            pathLength="1"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="4.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            onAnimationEnd={() => {
+              setState("complete");
+              restoreName();
+            }}
           />
         </svg>
       </button>
