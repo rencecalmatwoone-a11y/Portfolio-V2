@@ -103,6 +103,10 @@ a.link:focus-visible {
   background: var(--color-muted);
 }
 
+.status[data-status="Live"] > span {
+  background: var(--color-accent);
+}
+
 .title {
   margin: 0;
   font-size: 0.875rem;

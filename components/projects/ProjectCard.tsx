@@ -23,7 +23,7 @@ export function ProjectCard({ project }: { project: Project }) {
       <div className={styles.body}>
         <div className={styles.titleRow}>
           <h3 id={`${project.slug}-title`} className={styles.title}>{project.title}</h3>
-          {project.status && <span className={styles.status}><span aria-hidden="true" />{project.status}</span>}
+          {project.status && <span className={styles.status} data-status={project.status}><span aria-hidden="true" />{project.status}</span>}
         </div>
         <p className={styles.description}>{project.description}</p>
         <div className={styles.footer}>
