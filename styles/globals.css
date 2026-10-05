@@ -274,12 +274,17 @@ html[data-theme-transition="pixels"][data-theme="light"]::view-transition-new(ca
 html[data-theme-transition="pixels"][data-theme="dark"]::view-transition-new(car-scene-dark) {
   clip-path: inset(0 100% 0 0);
 }
-/* Keep the animated figure out of the frozen outgoing page snapshot. */
+/* Keep GIFs live while excluding their frozen outgoing captures. */
 html[data-theme-transition="pixels"] [data-walking-figure] {
   view-transition-name: walking-figure;
 }
 html[data-theme-transition="pixels"] [data-quote-gif] {
   view-transition-name: quote-gif;
+}
+/* The wrap fades must not paint the incoming color over the outgoing page. */
+html[data-theme-transition="pixels"] [data-walking-figure]::before,
+html[data-theme-transition="pixels"] [data-walking-figure]::after {
+  display: none;
 }
 html[data-theme-transition="pixels"]::view-transition-group(walking-figure),
 html[data-theme-transition="pixels"]::view-transition-group(quote-gif) {

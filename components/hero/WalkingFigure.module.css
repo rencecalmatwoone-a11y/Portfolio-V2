@@ -1,13 +1,39 @@
 .track {
   --figure-size: clamp(48px, 7vw, 76px);
-  --figure-width: var(--figure-size);
+  --figure-width: calc(var(--figure-size) * 230 / 460);
   --walk-duration: 14s;
-  --stand-duration: 1.8s;
   position: absolute;
   inset-inline: 0;
   bottom: 0;
   height: var(--figure-size);
   pointer-events: none;
+}
+
+.track[data-variant="walker"] {
+  inset-inline: calc(1px - var(--page-inset));
+  overflow-x: clip;
+}
+
+/* Blend the wrap at the page guides rather than cutting through the character
+   at the content inset. Keep this layer within the walking band. */
+.track[data-variant="walker"]::before,
+.track[data-variant="walker"]::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset-block: 0;
+  width: min(16px, calc(var(--figure-width) / 2));
+  pointer-events: none;
+}
+
+.track[data-variant="walker"]::before {
+  inset-inline-start: 0;
+  background: linear-gradient(to right, var(--color-background), transparent);
+}
+
+.track[data-variant="walker"]::after {
+  inset-inline-end: 0;
+  background: linear-gradient(to left, var(--color-background), transparent);
 }
 
 .track[data-variant="gif"] {
@@ -28,15 +54,22 @@
 }
 
 .runway {
-  width: calc(100% - var(--figure-width));
+  width: 100%;
   height: 100%;
 }
 
 .traveler {
+  position: relative;
   width: 100%;
   height: 100%;
-  animation: walk-right var(--walk-duration) linear both;
+  animation: walk-through var(--walk-duration) linear infinite;
   animation-play-state: paused;
+}
+
+.figure.wrapCopy {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: -100%;
 }
 
 .figure {
@@ -73,25 +106,21 @@
   filter: blur(2px);
 }
 
-.pose,
-.still {
-  background-image: url("/images/hero/walking-figure.webp");
-  background-size: 300% 200%;
+.track[data-variant="walker"] :is(.sprite, .still) {
+  background-image: url("/images/hero/super-happy-pixel-dungeon-still.webp");
+  background-size: contain;
+  background-position: center bottom;
   background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.track[data-variant="walker"][data-running="true"] .sprite {
+  background-image: url("/images/hero/super-happy-pixel-dungeon-transparent.gif");
 }
 
 .sprite {
   position: relative;
   isolation: isolate;
-}
-
-.pose {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  mix-blend-mode: plus-lighter;
-  animation: stride var(--stride-duration) linear infinite;
-  animation-play-state: paused;
 }
 
 .track[data-variant="gif"] :is(.sprite, .still) {
@@ -193,36 +222,8 @@
   transform: translateY(0);
 }
 
-.track[data-running="true"] .traveler,
-.track[data-running="true"] .pose {
+.track[data-running="true"] .traveler {
   animation-play-state: running;
-}
-
-.track[data-phase^="stand"] .pose {
-  animation: none;
-  opacity: 0;
-}
-
-.track[data-phase^="stand"] .pose:first-child {
-  opacity: 1;
-}
-
-.track[data-phase="stand-right"] .traveler {
-  animation-name: stand-right;
-  animation-duration: var(--stand-duration);
-}
-
-.track[data-phase="walk-left"] .traveler {
-  animation-name: walk-left;
-}
-
-.track[data-phase="stand-left"] .traveler {
-  animation-name: stand-left;
-  animation-duration: var(--stand-duration);
-}
-
-.track[data-phase$="left"] .sprite {
-  transform: scaleX(-1);
 }
 
 .figure:focus-visible,
@@ -231,33 +232,17 @@
   outline-offset: 2px;
 }
 
-@keyframes walk-right {
+@keyframes walk-through {
   from { transform: translateX(0); }
   to { transform: translateX(100%); }
 }
 
-@keyframes stand-right {
-  from, to { transform: translateX(100%); }
-}
-
-@keyframes walk-left {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
-}
-
-@keyframes stand-left {
-  from, to { transform: translateX(0); }
-}
-
-@keyframes stride {
-  0%, 8.333333%, 100% { opacity: 1; }
-  16.666667%, 91.666667% { opacity: 0; }
-}
-
 @media (prefers-reduced-motion: reduce) {
+  .track[data-variant="walker"] { inset-inline: 0; }
+  .track[data-variant="walker"]::before,
+  .track[data-variant="walker"]::after { display: none; }
   .runway { display: none; }
-  .traveler,
-  .pose { animation: none; }
+  .traveler { animation: none; }
   .still { display: block; }
   .bubble { transition: none; }
 }
