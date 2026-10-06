@@ -8,10 +8,10 @@ export const geist = localFont({
   variable: "--font-geist",
 });
 
-export const plusJakartaSans = localFont({
-  src: "./font-assets/PlusJakartaSans-Variable.ttf",
-  weight: "200 800",
+export const inter = localFont({
+  src: "./font-assets/Inter-Variable.woff2",
+  weight: "100 900",
   style: "normal",
   display: "swap",
-  variable: "--font-plus-jakarta-sans",
+  variable: "--font-inter",
 });

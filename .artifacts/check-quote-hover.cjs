@@ -16,6 +16,10 @@ const sharp = require('sharp');
         await page.evaluate(() => document.fonts.ready);
         const section = page.locator('section[aria-label="A personal quote"]');
         const band = section.locator('[data-hover-area]');
+        const waitBackground = expected => page.waitForFunction(value => {
+          const el = document.querySelector('section[aria-label="A personal quote"] [data-hover-area]');
+          return el && getComputedStyle(el).backgroundColor === value;
+        }, expected);
         // The shared section rule must not reintroduce padding if its stylesheet loads last.
         await page.addStyleTag({ content: '.page-section { padding-block: var(--space-8) var(--space-12); }' });
         const placeBand = async () => {
@@ -33,12 +37,12 @@ const sharp = require('sharp');
         for (const theme of ['light', 'dark']) {
           await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
           await page.mouse.move(0, 0);
-          await page.waitForTimeout(250);
+          await waitBackground('rgba(0, 0, 0, 0)');
           assert.equal(await band.evaluate(el => getComputedStyle(el).backgroundColor), 'rgba(0, 0, 0, 0)', `Hover resets in ${theme} at ${width}`);
           const current = await band.boundingBox();
           await page.mouse.move(current.x + current.width - 12, current.y + 3);
-          await page.waitForTimeout(250);
           const expected = theme === 'dark' ? 13 : 250;
+          await waitBackground(`rgb(${expected}, ${expected}, ${expected})`);
           assert.equal(await band.evaluate(el => getComputedStyle(el).backgroundColor), `rgb(${expected}, ${expected}, ${expected})`, `Highlight in ${theme} at ${width}`);
           assert.equal(await section.getByRole('button', { name: 'Reveal quote', exact: true }).isVisible(), true, 'Hover preserves reveal button');
           const screenshot = await page.screenshot({ path: `.artifacts/quote-hover-${theme}-${width}-${reducedMotion}.png` });
@@ -62,7 +66,7 @@ const sharp = require('sharp');
         await placeBand();
         const revealedBox = await band.boundingBox();
         await page.mouse.move(revealedBox.x + 12, revealedBox.y + 3);
-        await page.waitForTimeout(250);
+        await waitBackground('rgb(13, 13, 13)');
         assert.equal(await band.evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(13, 13, 13)', 'Hover works after reveal');
         await page.close();
       }
