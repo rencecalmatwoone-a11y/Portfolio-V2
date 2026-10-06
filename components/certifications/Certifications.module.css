@@ -7,6 +7,7 @@
 }
 .header > p {
   max-width: 48ch;
+  font-family: var(--font-description);
   margin: var(--space-2) 0 0;
   color: var(--color-muted);
   font-size: 0.9375rem;
@@ -39,7 +40,7 @@
 .status { display: inline-flex; align-items: center; gap: 6px; }
 .status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--color-accent); }
 .status[data-status="in-progress"]::before { background: var(--color-muted); }
-.description { margin: var(--space-3) 0 0; font-size: 0.8125rem; line-height: 1.75; color: var(--color-muted); }
+.description { margin: var(--space-3) 0 0; font-family: var(--font-description); font-size: 0.8125rem; line-height: 1.75; color: var(--color-muted); }
 .cardFooter { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-4); margin-top: auto; padding-top: var(--space-4); border-top: 1px solid color-mix(in srgb, var(--color-border) 55%, var(--color-background)); }
 .cardFooter .metadata { display: grid; gap: 2px; margin: 0; }
 .date { padding-left: 11px; }

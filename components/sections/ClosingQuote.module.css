@@ -1,4 +1,4 @@
-.section {
+.section:global(.page-section) {
   --quote-band-height: 10rem;
   display: flex;
   flex-direction: column;

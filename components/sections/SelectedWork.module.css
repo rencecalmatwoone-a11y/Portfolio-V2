@@ -7,6 +7,7 @@
 }
 .header p {
   margin: var(--space-2) 0 0;
+  font-family: var(--font-description);
   color: var(--color-muted);
   font-size: 0.9375rem;
   line-height: 1.6;

@@ -51,6 +51,7 @@
 
 .intro {
   max-width: 36rem;
+  font-family: var(--font-description);
   margin: var(--space-3) 0 0;
   color: var(--color-muted);
   font-size: 0.9375rem;
@@ -130,6 +131,7 @@ a.projectLink:focus-visible {
 
 .description {
   margin: var(--space-2) 0 0;
+  font-family: var(--font-description);
   color: var(--color-muted);
   font-size: 0.8125rem;
   line-height: 1.65;

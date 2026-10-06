@@ -75,6 +75,7 @@
 
 .description {
   margin-inline-start: calc(36px + var(--space-3));
+  font-family: var(--font-description);
   max-width: 60ch;
 }
 

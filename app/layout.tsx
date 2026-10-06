@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { geist } from "@/lib/fonts";
+import { geist, plusJakartaSans } from "@/lib/fonts";
 import { profile } from "@/data/profile";
 import { SiteShell } from "@/components/layout/SiteShell";
 import "lenis/dist/lenis.css";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={geist.variable}>
+    <html lang="en" className={`${geist.variable} ${plusJakartaSans.variable}`}>
       <body><SiteShell>{children}</SiteShell></body>
     </html>
   );

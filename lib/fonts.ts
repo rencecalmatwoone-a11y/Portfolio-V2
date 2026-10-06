@@ -7,3 +7,11 @@ export const geist = localFont({
   display: "swap",
   variable: "--font-geist",
 });
+
+export const plusJakartaSans = localFont({
+  src: "./font-assets/PlusJakartaSans-Variable.ttf",
+  weight: "200 800",
+  style: "normal",
+  display: "swap",
+  variable: "--font-plus-jakarta-sans",
+});
