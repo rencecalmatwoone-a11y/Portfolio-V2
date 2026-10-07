@@ -33,4 +33,10 @@ export const musicTracks: readonly MusicTrack[] = [
     href: "https://open.spotify.com/track/1gkoTg9lUdJJTxIjrkZDKn",
     audioSrc: "/audio/les.mp3",
   },
+  {
+    id: "wave-to-earth-love", title: "love.", artist: "wave to earth",
+    cover: "/images/music/flaws-and-all.jpg",
+    href: "https://open.spotify.com/track/5mtTAScDytxMMqZj14NmlN",
+    audioSrc: "/audio/wave-to-earth-love.mp3",
+  },
 ];

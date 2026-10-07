@@ -65,7 +65,7 @@ try {
       const box = await player.boundingBox();
       assert.ok(box.x >= 0 && box.x + box.width <= width, `${theme}/${width} panel overflow`);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);
-      assert.equal(await player.getByRole("list", { name: "Music playlist" }).getByRole("button").count(), 4);
+      assert.equal(await player.getByRole("list", { name: "Music playlist" }).getByRole("button").count(), 5);
       await page.screenshot({ path: path.join(output, `${theme}-${width}-songs.png`) });
       await nowPlaying();
       assert.equal(await player.getByRole("img").isVisible(), true, "Album artwork is visible by default");
@@ -122,13 +122,13 @@ try {
   await mainMenu();
   await player.getByRole("button", { name: "Music", exact: true }).click();
   await player.getByRole("button", { name: "Artists", exact: true }).click();
-  assert.equal(await player.getByRole("list", { name: "Artists menu" }).getByRole("button").count(), 3);
+  assert.equal(await player.getByRole("list", { name: "Artists menu" }).getByRole("button").count(), 4);
   await player.getByRole("button", { name: "Frank Ocean", exact: true }).click();
   assert.equal(await player.getByRole("list", { name: "Music playlist" }).getByRole("button").count(), 2);
   await back();
   assert.equal(await view(), "artists");
 
-  const tracks = [["Nights", "Frank Ocean", "nights.mp3"], ["Futura Free", "Frank Ocean", "futura-free.mp3"], ["Japanese Denim", "Daniel Caesar", "japanese-denim.mp3"], ["Les", "Childish Gambino", "les.mp3"]];
+  const tracks = [["Nights", "Frank Ocean", "nights.mp3"], ["Futura Free", "Frank Ocean", "futura-free.mp3"], ["Japanese Denim", "Daniel Caesar", "japanese-denim.mp3"], ["Les", "Childish Gambino", "les.mp3"], ["love.", "wave to earth", "wave-to-earth-love.mp3"]];
   const durations = {};
   for (const [title, artist, filename] of tracks) {
     await songs();
@@ -161,13 +161,13 @@ try {
   await player.getByRole("button", { name: "Shuffle Songs", exact: true }).click();
   await page.waitForFunction(() => { const el = document.querySelector("audio"); return !el.paused && el.readyState >= 3; });
   const shuffleOrder = [await audio.evaluate(el => el.currentSrc)];
-  for (let count = 0; count < 3; count++) {
+  for (let count = 0; count < tracks.length - 1; count++) {
     const previous = shuffleOrder.at(-1);
     await player.getByRole("button", { name: "Next song" }).click();
     await page.waitForFunction(previous => { const el = document.querySelector("audio"); return el.currentSrc !== previous && !el.paused && el.currentTime > 0.2; }, previous);
     shuffleOrder.push(await audio.evaluate(el => el.currentSrc));
   }
-  assert.equal(new Set(shuffleOrder).size, 4);
+  assert.equal(new Set(shuffleOrder).size, tracks.length);
   const lastShuffleTrack = shuffleOrder.at(-1);
   await audio.evaluate(el => { el.currentTime = el.duration - 0.15; });
   await page.waitForFunction(src => { const el = document.querySelector("audio"); return el.currentSrc === src && el.ended && el.paused; }, lastShuffleTrack);
@@ -186,8 +186,8 @@ try {
   await player.getByRole("button", { name: "Repeat: One", exact: true }).click();
   await nowPlaying();
   await songs();
-  await player.getByRole("button", { name: "Select Les by Childish Gambino" }).click();
-  await page.waitForFunction(() => { const el = document.querySelector("audio"); return el.currentSrc.endsWith("les.mp3") && el.readyState >= 3 && !el.paused && el.currentTime > 0.2; });
+  await player.getByRole("button", { name: "Select love. by wave to earth" }).click();
+  await page.waitForFunction(() => { const el = document.querySelector("audio"); return el.currentSrc.endsWith("wave-to-earth-love.mp3") && el.readyState >= 3 && !el.paused && el.currentTime > 0.2; });
   await audio.evaluate(el => { el.currentTime = el.duration - 0.15; });
   await page.waitForFunction(() => { const el = document.querySelector("audio"); return el.currentSrc.endsWith("nights.mp3") && !el.paused && el.currentTime > 0.2; });
   await settings();
