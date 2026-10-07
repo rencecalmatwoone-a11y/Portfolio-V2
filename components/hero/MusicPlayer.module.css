@@ -5,6 +5,10 @@
   inset-inline-end: 0;
   color: var(--color-text);
 }
+@media (max-width: 47.999rem) {
+  /* Let the fixed mobile navigation cover the player as the hero scrolls away. */
+  .root { z-index: 19; }
+}
 @media (min-width: 64rem) {
   .root { inset-block-start: calc(var(--hero-content-start) + 0.75rem); }
 }
