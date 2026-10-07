@@ -23,7 +23,7 @@ function timestamp(seconds: number) {
 
 export function MusicPlayer() {
   const playback = useMusicPlayback();
-  const { audioRef, track, index, playing, loading, elapsed, duration, volume, muted, error, shuffle, repeat, changeVolume } = playback;
+  const { audioRef, track, index, playing, loading, elapsed, duration, volume, muted, error, shuffle, repeat, adjustVolume, seek } = playback;
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<View>("songs");
   const [selected, setSelected] = useState(0);
@@ -39,7 +39,7 @@ export function MusicPlayer() {
   const centerRef = useRef<HTMLButtonElement>(null);
   const wheelRef = useRef<HTMLDivElement>(null);
   const autoBacklightRef = useRef(true);
-  const gestureRef = useRef<{ pointer: number; angle: number; accumulated: number; moved: boolean } | null>(null);
+  const gestureRef = useRef<{ pointer: number; angle: number; accumulated: number; moved: boolean; time: number } | null>(null);
   const suppressClickRef = useRef(false);
   const menuStack = useRef<View[]>(["main", "music"]);
   const id = useId();
@@ -156,14 +156,12 @@ export function MusicPlayer() {
       const audio = audioRef.current;
       if (audio && Number.isFinite(audio.duration) && !audio.error) {
         const time = Math.max(0, Math.min(audio.duration, audio.currentTime + steps * 5));
-        audio.currentTime = time;
-        // The media timeupdate event keeps the LCD in sync while the wheel seeks.
+        seek(time);
       }
     } else if (view === "volume") {
-      const audio = audioRef.current;
-      if (audio) changeVolume(audio.volume + steps * 0.05);
+      adjustVolume(steps * 0.05);
     } else setSelected(previous => Math.max(0, Math.min(items.length - 1, previous + steps)));
-  }, [wake, view, audioRef, items.length, changeVolume]);
+  }, [wake, view, audioRef, items.length, adjustVolume, seek]);
 
   useEffect(() => {
     const wheel = wheelRef.current;
@@ -185,11 +183,13 @@ export function MusicPlayer() {
 
   function wheelPointerDown(event: PointerEvent<HTMLDivElement>) {
     suppressClickRef.current = false;
-    if (!booted || (event.target as HTMLElement).closest("button")) return;
+    const button = (event.target as Element).closest("button");
+    if (!booted || button === centerRef.current) return;
     const rect = event.currentTarget.getBoundingClientRect();
-    gestureRef.current = { pointer: event.pointerId, angle: Math.atan2(event.clientY - rect.top - rect.height / 2, event.clientX - rect.left - rect.width / 2), accumulated: 0, moved: false };
-    event.currentTarget.setPointerCapture(event.pointerId);
-    event.currentTarget.focus({ preventScroll: true });
+    gestureRef.current = { pointer: event.pointerId, angle: Math.atan2(event.clientY - rect.top - rect.height / 2, event.clientX - rect.left - rect.width / 2), accumulated: 0, moved: false, time: audioRef.current?.currentTime ?? 0 };
+    // Capture on the original button so a tap still clicks it; a drag suppresses that click.
+    (button ?? event.currentTarget).setPointerCapture(event.pointerId);
+    if (!button) event.currentTarget.focus({ preventScroll: true });
     wake();
   }
 
@@ -203,6 +203,20 @@ export function MusicPlayer() {
     if (delta < -Math.PI) delta += Math.PI * 2;
     gesture.angle = angle;
     gesture.accumulated += delta;
+    if (view === "playing" || view === "volume") {
+      // Ignore finger jitter, then follow the full arc rather than five-second notches.
+      if (!gesture.moved && Math.abs(gesture.accumulated) < 0.04) return;
+      gesture.moved = true;
+      const audio = audioRef.current;
+      if (view === "volume") adjustVolume(gesture.accumulated * (0.05 / 0.3));
+      else if (audio && Number.isFinite(audio.duration) && !audio.error) {
+        gesture.time = Math.max(0, Math.min(audio.duration, gesture.time + gesture.accumulated * (5 / 0.3)));
+        seek(gesture.time);
+      }
+      gesture.accumulated = 0;
+      wake();
+      return;
+    }
     const steps = Math.trunc(gesture.accumulated / 0.3);
     if (steps) { gesture.moved = true; gesture.accumulated -= steps * 0.3; stepWheel(steps); }
   }
@@ -228,7 +242,7 @@ export function MusicPlayer() {
   }
 
   const selectedItem = items[selected];
-  const centerLabel = view === "playing" ? artwork ? "Show track details" : "Show album artwork" : view === "volume" ? muted ? "Unmute music" : "Mute music" : `Select ${selectedItem?.label ?? "menu item"}`;
+  const centerLabel = view === "playing" ? artwork ? "Show track details" : "Show album artwork" : view === "volume" ? muted || volume === 0 ? "Unmute music" : "Mute music" : `Select ${selectedItem?.label ?? "menu item"}`;
   const wheelPreviousLabel = view === "playing" ? "Previous song" : view === "volume" ? "Decrease volume" : "Previous menu item";
   const wheelNextLabel = view === "playing" ? "Next song" : view === "volume" ? "Increase volume" : "Next menu item";
   const status = !track.audioSrc ? "Audio coming soon" : error ? "Couldn't play. Press play to retry." : loading ? "Loading..." : playing ? "Playing" : "Paused";
@@ -236,7 +250,7 @@ export function MusicPlayer() {
   return (
     <div className={styles.root} ref={rootRef} onKeyDown={onKeyDown} onPointerDownCapture={wake} onBlur={event => { if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget) && !isThemeControl(event.relatedTarget)) setOpen(false); }}>
       <button type="button" ref={triggerRef} className={styles.trigger} aria-label={playing ? `Music player: playing ${track.title}` : "Open music player"} aria-expanded={open} aria-controls={id} aria-haspopup="dialog" title="A little background music" data-playing={playing} onClick={() => { wake(); setOpen(!open); }}>
-        <Headphones size={19} strokeWidth={1.5} aria-hidden="true" />
+        {playing ? <span className={styles.playingIcon} aria-hidden="true" data-loading={loading}><span /><span /><span /><span /></span> : <Headphones size={19} strokeWidth={1.5} aria-hidden="true" />}
       </button>
       <div ref={panelRef} tabIndex={-1} className={styles.panel} id={id} role="dialog" aria-label="Music player" hidden={!open} data-backlight={backlight} data-lcd-filter={lcdFilter} data-booted={booted} data-view={view} data-lenis-prevent>
         <div className={styles.screen}>

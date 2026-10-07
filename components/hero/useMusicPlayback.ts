@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { musicTracks } from "@/data/music";
 
 export type RepeatMode = "off" | "one" | "all";
@@ -26,14 +26,59 @@ export function useMusicPlayback() {
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState<RepeatMode>("off");
   const audioRef = useRef<HTMLAudioElement>(null);
+  const levelRef = useRef({ volume: 0.65, muted: false });
+  const outputRef = useRef<{ context: AudioContext; source: MediaElementAudioSourceNode; gain: GainNode } | null>(null);
+  const volumeCheckedRef = useRef(false);
   const resumeRef = useRef(false);
   const orderRef = useRef(musicTracks.map((_, index) => index));
   const track = musicTracks[index];
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (audio) { audio.volume = volume; audio.muted = muted; }
+    if (audio && !outputRef.current) { audio.volume = volume; audio.muted = muted; }
   }, [volume, muted]);
+
+  useEffect(() => () => {
+    const output = outputRef.current;
+    if (output) {
+      output.source.disconnect();
+      output.gain.disconnect();
+      void output.context.close();
+      outputRef.current = null;
+    }
+  }, []);
+
+  // iOS may ignore HTMLMediaElement.volume. Create its gain stage in a user gesture.
+  function prepareOutput() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (!volumeCheckedRef.current) {
+      audio.volume = 0.5;
+      const nativeVolume = Math.abs(audio.volume - 0.5) < 0.001;
+      audio.volume = levelRef.current.volume;
+      if (!nativeVolume) {
+        const context = new AudioContext();
+        const gain = context.createGain();
+        gain.gain.value = levelRef.current.muted ? 0 : levelRef.current.volume;
+        const source = context.createMediaElementSource(audio);
+        source.connect(gain);
+        gain.connect(context.destination);
+        outputRef.current = { context, gain, source };
+      }
+      volumeCheckedRef.current = true;
+    }
+    const output = outputRef.current;
+    if (output) {
+      audio.volume = 1;
+      audio.muted = false;
+      const level = levelRef.current.muted ? 0 : levelRef.current.volume;
+      output.gain.gain.setTargetAtTime(level, output.context.currentTime, 0.015);
+      if (output.context.state !== "running") void output.context.resume().catch(() => {});
+    } else {
+      audio.volume = levelRef.current.volume;
+      audio.muted = levelRef.current.muted;
+    }
+  }
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -51,6 +96,7 @@ export function useMusicPlayback() {
   async function play() {
     const audio = audioRef.current;
     if (!audio || !track.audioSrc) return;
+    prepareOutput();
     if (!audio.paused && !audio.ended && !audio.error) return;
     setError(false);
     setLoading(true);
@@ -78,6 +124,7 @@ export function useMusicPlayback() {
   }
 
   function selectTrack(next: number, autoplay = true) {
+    if (autoplay) prepareOutput();
     const normalized = (next + musicTracks.length) % musicTracks.length;
     if (normalized === index) { if (autoplay) void play(); return; }
     audioRef.current?.pause();
@@ -112,22 +159,32 @@ export function useMusicPlayback() {
     selectTrack(orderRef.current[0]);
   }
 
-  function seek(time: number) {
+  const seek = useCallback((time: number) => {
     const audio = audioRef.current;
-    if (!audio || !Number.isFinite(audio.duration) || error) return;
+    if (!audio || !Number.isFinite(audio.duration) || audio.error) return;
     const next = Math.max(0, Math.min(audio.duration, time));
     audio.currentTime = next;
     setElapsed(next);
-  }
+  }, []);
 
   function toggleMute() {
-    if (volume === 0) setVolume(0.65);
-    setMuted(!muted && volume !== 0);
+    const current = levelRef.current;
+    levelRef.current = { volume: current.volume || 0.65, muted: !current.muted && current.volume !== 0 };
+    setVolume(levelRef.current.volume);
+    setMuted(levelRef.current.muted);
+    prepareOutput();
   }
 
   function changeVolume(next: number) {
-    setVolume(Math.max(0, Math.min(1, next)));
+    const level = Math.max(0, Math.min(1, next));
+    levelRef.current = { volume: level, muted: false };
+    setVolume(level);
     setMuted(false);
+    prepareOutput();
+  }
+
+  function adjustVolume(delta: number) {
+    changeVolume((levelRef.current.muted ? 0 : levelRef.current.volume) + delta);
   }
 
   const events = {
@@ -143,5 +200,5 @@ export function useMusicPlayback() {
     onError: () => { if (track.audioSrc) { setError(true); setLoading(false); setPlaying(false); } },
   };
 
-  return { audioRef, track, index, playing, loading, elapsed, duration, volume, muted, error, shuffle, repeat, setRepeat, toggleShuffle, shuffleSongs, selectTrack, skip, seek, togglePlayback, toggleMute, changeVolume, events };
+  return { audioRef, track, index, playing, loading, elapsed, duration, volume, muted, error, shuffle, repeat, setRepeat, toggleShuffle, shuffleSongs, selectTrack, skip, seek, togglePlayback, toggleMute, changeVolume, adjustVolume, events };
 }
