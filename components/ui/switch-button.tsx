@@ -11,6 +11,7 @@ type SwitchProps = {
   className?: string;
   "aria-label"?: string;
   title?: string;
+  "data-theme-toggle"?: boolean;
 };
 
 export function Switch({
@@ -21,6 +22,7 @@ export function Switch({
   className = "",
   "aria-label": label = "Dark mode",
   title,
+  "data-theme-toggle": themeToggle,
 }: SwitchProps) {
   const reduceMotion = useReducedMotion();
 
@@ -31,6 +33,7 @@ export function Switch({
       aria-checked={value}
       aria-label={label}
       title={title}
+      data-theme-toggle={themeToggle || undefined}
       className={`bg-card-foreground/15 flex w-10 shrink-0 cursor-pointer rounded-full p-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 ${
         value ? "justify-end" : "justify-start"
       } ${className}`}

@@ -5,19 +5,25 @@
   inset-inline-end: 0;
   color: var(--color-text);
 }
+@media (min-width: 64rem) {
+  .root { inset-block-start: calc(var(--hero-content-start) + 0.75rem); }
+}
 .trigger {
   display: grid;
   place-items: center;
   width: 36px;
   height: 36px;
-  border: 1px dashed var(--color-border);
-  border-radius: 6px;
-  background: var(--color-background);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
   color: var(--color-muted);
   cursor: pointer;
-  transition: color 180ms, border-color 180ms;
+  transition: color 180ms, background-color 180ms;
 }
-.trigger[aria-expanded="true"], .trigger[data-playing="true"] { color: var(--color-accent); border-color: var(--color-accent); }
+.trigger[aria-expanded="true"], .trigger[data-playing="true"] { color: var(--color-accent); }
+.trigger[aria-expanded="true"], .trigger:focus-visible { background: color-mix(in srgb, var(--color-text) 6%, transparent); }
+.trigger:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 .panel {
   --case-top: #fcfcfa;
   --case-bottom: #e8eae4;
@@ -45,17 +51,18 @@
   box-shadow: inset 0 1px 2px #fff, inset 0 -2px 3px rgb(0 0 0 / 5%), 0 2px 0 var(--case-edge), 0 8px 16px rgb(0 0 0 / 12%), 0 18px 30px rgb(0 0 0 / 10%);
 }
 :global(:root[data-theme="dark"]) .panel {
-  --case-top: #2a2e28;
-  --case-bottom: #111510;
-  --case-edge: #3c4537;
-  --wheel-top: #383e32;
-  --wheel-bottom: #1b2117;
-  --hardware-ink: #b8c4ad;
-  --hardware-edge: #454e3f;
+  --case-top: #1a1a1a;
+  --case-bottom: #000;
+  --case-edge: #373737;
+  --wheel-top: #c41e3a;
+  --wheel-bottom: #8b0000;
+  --hardware-ink: #fff;
+  --hardware-edge: #701425;
   --lcd-lit: #bfdcbe;
   --lcd-dim: #91a48a;
-  box-shadow: inset 0 1px 1px #59624f, inset 0 -2px 3px #111, 0 2px 0 #0a0d08, 0 8px 16px rgb(0 0 0 / 35%), 0 18px 30px rgb(0 0 0 / 25%);
+  box-shadow: inset 0 1px 1px #555, inset 0 -2px 3px #111, 0 2px 0 #080808, 0 8px 16px rgb(0 0 0 / 35%), 0 18px 30px rgb(0 0 0 / 25%);
 }
+:global(:root[data-theme="dark"]) .centerButton { border-color: #333; background: linear-gradient(145deg, #2a2a2a, #0a0a0a); }
 .panel[data-backlight="false"] { --lcd: var(--lcd-dim); --lcd-ink: #29342a; }
 .panel[hidden] { display: none; }
 .muteButton { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; color: inherit; background: transparent; cursor: pointer; }
@@ -127,21 +134,13 @@
 .centerButton:active { box-shadow: inset 0 2px 4px rgb(0 0 0 / 15%); }
 .root button:focus-visible, .root a:focus-visible, .range:focus-visible, .wheel:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 .screen button:focus-visible, .screen a:focus-visible, .screen .range:focus-visible { outline: 2px solid var(--lcd-ink); outline-offset: -2px; }
-.equalizer { display: flex; align-items: center; gap: 2px; height: 18px; }
-.equalizer i { width: 2px; height: 12px; border-radius: 2px; background: currentColor; }
-.equalizer i:nth-child(2) { height: 7px; }
-.equalizer i:nth-child(3) { height: 16px; }
-.equalizer i:nth-child(4) { height: 9px; }
 @media (hover: hover) {
   .trigger:hover, .wheelButton:hover { color: var(--color-accent); }
+  .trigger:hover { background: color-mix(in srgb, var(--color-text) 6%, transparent); }
   .menuItem:hover { background: var(--lcd-ink); color: var(--lcd); }
 }
 @media (prefers-reduced-motion: no-preference) {
   .panel:not([hidden]) { animation: appear 200ms var(--ease-out) both; transform-origin: top right; }
-  .equalizer i { animation: equalize 900ms ease-in-out infinite alternate; }
-  .equalizer i:nth-child(2) { animation-delay: -300ms; }
-  .equalizer i:nth-child(3) { animation-delay: -600ms; }
-  .equalizer i:nth-child(4) { animation-delay: -150ms; }
 }
 @media (prefers-reduced-motion: reduce) { .trigger, .screen { transition: none; } }
 @media (pointer: coarse) {
@@ -150,8 +149,4 @@
   .screen { height: 172px; }
   .range { height: 28px; }
 }
-@media (max-width: 600px) and (max-height: 700px) {
-  .panel { position: fixed; inset-block-start: 12px; inset-inline-end: calc(var(--page-gutter) + var(--page-inset)); max-height: calc(100dvh - 24px); }
-}
 @keyframes appear { from { opacity: 0; transform: translateY(-5px) rotate(1deg); } to { opacity: 1; transform: none; } }
-@keyframes equalize { from { transform: scaleY(0.4); } to { transform: scaleY(1); } }

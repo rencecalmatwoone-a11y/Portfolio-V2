@@ -57,7 +57,10 @@ try {
   for (const theme of ["light", "dark"]) {
     for (const width of [320, 375, 768, 1440]) {
       await page.setViewportSize({ width, height: 1000 });
+      await page.goto(baseURL, { waitUntil: "domcontentloaded" });
       await page.evaluate(theme => { document.documentElement.dataset.theme = theme; }, theme);
+      await trigger().click();
+      await page.waitForFunction(() => document.querySelector('[role="dialog"]').dataset.booted === "true");
       await songs();
       const box = await player.boundingBox();
       assert.ok(box.x >= 0 && box.x + box.width <= width, `${theme}/${width} panel overflow`);
@@ -65,38 +68,26 @@ try {
       assert.equal(await player.getByRole("list", { name: "Music playlist" }).getByRole("button").count(), 4);
       await page.screenshot({ path: path.join(output, `${theme}-${width}-songs.png`) });
       await nowPlaying();
-      if (await player.getByRole("button", { name: "Show album artwork" }).isVisible()) await player.getByRole("button", { name: "Show album artwork" }).click();
+      assert.equal(await player.getByRole("img").isVisible(), true, "Album artwork is visible by default");
       await page.waitForFunction(() => [...document.querySelectorAll('[role="dialog"] img')].every(el => el.complete && el.naturalWidth > 0));
       await page.screenshot({ path: path.join(output, `${theme}-${width}-playing.png`) });
       await trigger().click();
       assert.equal(await trigger().evaluate(el => el === document.activeElement), true);
-      await trigger().click();
     }
   }
   await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(baseURL, { waitUntil: "domcontentloaded" });
+  await trigger().click();
+  await page.waitForFunction(() => document.querySelector('[role="dialog"]').dataset.booted === "true");
 
   // Highlighting with the wheel changes menu selection without changing audio.
   await songs();
-  await page.evaluate(() => {
-    window.__menuEvents = [];
-    for (const name of ["pointerdown", "pointerover", "focusin", "click"]) document.addEventListener(name, event => {
-      window.__menuEvents.push({ name, target: event.target.closest?.("[aria-label]")?.getAttribute("aria-label"), selected: document.querySelector('[data-highlighted="true"]')?.textContent, scrollY: window.scrollY });
-    }, true);
-  });
   await player.getByRole("button", { name: "Next menu item" }).click();
   assert.equal(await player.locator('[data-highlighted="true"]').innerText(), "Futura Free");
   assert.ok((await audio.getAttribute("src")).endsWith("nights.mp3"));
   await player.getByRole("button", { name: "Previous menu item" }).click();
   await page.waitForTimeout(230);
-  console.log("MENU EVENTS", await page.evaluate(() => window.__menuEvents));
   assert.equal(await player.locator('[data-highlighted="true"]').innerText(), "Nights");
-  await wheel.evaluate(el => {
-    window.__wheelEvents = [];
-    for (const name of ["pointerdown", "pointermove", "pointerup", "click"]) el.addEventListener(name, event => {
-      const rect = el.getBoundingClientRect();
-      window.__wheelEvents.push({ name, target: event.target.getAttribute?.("aria-label"), angle: Math.atan2(event.clientY - rect.top - rect.height / 2, event.clientX - rect.left - rect.width / 2), rect: {x:rect.x,y:rect.y}, selected: document.querySelector('[data-highlighted="true"]')?.textContent });
-    }, true);
-  });
   const bounds = await wheel.boundingBox();
   const cx = bounds.x + bounds.width / 2, cy = bounds.y + bounds.height / 2, radius = bounds.width * 0.42;
   // Drag the ring through an arc away from the five buttons.
@@ -104,7 +95,6 @@ try {
   await page.mouse.down();
   for (let angle = -0.7; angle <= -0.1; angle += 0.1) await page.mouse.move(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius);
   await page.mouse.up();
-  console.log("WHEEL EVENTS", await page.evaluate(() => window.__wheelEvents));
   assert.equal(await player.locator('[data-highlighted="true"]').innerText(), "Japanese Denim");
   assert.equal(await audio.evaluate(el => el.paused), true);
   await wheel.focus();
@@ -112,6 +102,20 @@ try {
   assert.equal(await player.locator('[data-highlighted="true"]').innerText(), "Les");
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => { const el = document.querySelector("audio"); return el.currentSrc.endsWith("les.mp3") && !el.paused && el.currentTime > 0.2; });
+  assert.equal(await player.getByRole("img").isVisible(), true);
+  const beforeTheme = await audio.evaluate(el => ({ src: el.currentSrc, time: el.currentTime }));
+  const themeSwitch = page.getByRole("switch", { name: "Dark mode" });
+  for (const theme of ["dark", "light"]) {
+    await themeSwitch.click();
+    await page.waitForFunction(theme => document.documentElement.dataset.theme === theme && !document.documentElement.dataset.themeTransition, theme);
+    assert.equal(await player.isVisible(), true, "Theme switching keeps the player open");
+    assert.equal(await view(), "playing");
+    assert.equal(await audio.evaluate(el => el.paused), false);
+    assert.equal(await audio.evaluate(el => el.currentSrc), beforeTheme.src);
+    assert.ok(await audio.evaluate(el => el.currentTime) >= beforeTheme.time);
+    assert.equal(await player.getByRole("img").isVisible(), true);
+    if (theme === "dark") assert.equal(await player.evaluate(el => getComputedStyle(el).getPropertyValue("--wheel-top").trim()), "#c41e3a");
+  }
   await player.getByRole("button", { name: "Pause song" }).click();
 
   // Artist browsing has canonical grouping and returns through the menu hierarchy.
@@ -245,6 +249,8 @@ try {
     for (let angle = -0.7; angle <= -0.1; angle += 0.1) await session.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [point(angle)] });
     await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
     assert.equal(await touchPanel.locator('[data-highlighted="true"]').innerText(), "Japanese Denim");
+    // Let Chrome finish the synthetic touch gesture before starting a separate tap.
+    await touch.waitForTimeout(300);
     await touchPanel.getByRole("button", { name: "Previous menu item" }).tap();
     await touchPanel.getByRole("button", { name: "Select Futura Free", exact: true }).tap();
     await touch.waitForFunction(() => { const el = document.querySelector("audio"); return el.currentSrc.endsWith("futura-free.mp3") && !el.paused && el.currentTime > 0.2; });
@@ -272,6 +278,10 @@ try {
   await idle.getByRole("button", { name: "Open music player" }).focus();
   await idle.keyboard.press("Enter");
   assert.equal(await idlePlayer.getAttribute("data-backlight"), "true", "Keyboard opening wakes the display");
+  await idle.keyboard.press("ArrowDown");
+  await idle.keyboard.press("Enter");
+  await idle.waitForFunction(() => { const el = document.querySelector("audio"); return !el.paused && el.currentTime > 0.2; });
+  assert.equal(await idlePlayer.getAttribute("data-view"), "playing", "Opening focus supports keyboard selection");
   await idle.close();
   assert.deepEqual(errors, []);
   console.log(JSON.stringify({ result: "passed", widths: [320, 375, 768, 1440], themes: ["light", "dark"], actualAudioDurations: durations, checks: ["boot", "no autoplay or initial audio download", "menu hierarchy", "independent highlight", "drag wheel", "keyboard select", "artists", "actual MP3 playback", "pause", "previous/next", "wheel seek", "slider seek", "volume/mute", "playback survives close and browsing", "automatic next", "shuffle", "repeat one/all", "backlight", "LCD filter", "network error/retry", "keyboard/Escape/focus", "outside dismissal", "reduced motion", "touch", "no overflow"], screenshots: output }, null, 2));

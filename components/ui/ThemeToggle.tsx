@@ -100,6 +100,7 @@ export function ThemeToggle() {
 
 	return (
 		<Switch
+			data-theme-toggle
 			className={styles.toggle}
 			value={isDark}
 			aria-label="Dark mode"

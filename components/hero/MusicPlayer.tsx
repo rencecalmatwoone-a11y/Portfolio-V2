@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { BatteryFull, ChevronRight, Music2, Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward, Volume2, VolumeX } from "lucide-react";
+import { BatteryFull, ChevronRight, Headphones, Music2, Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward, Volume2, VolumeX } from "lucide-react";
 import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 import { musicTracks } from "@/data/music";
 import { profile } from "@/data/profile";
@@ -12,6 +12,10 @@ type View = "main" | "music" | "songs" | "artists" | "artistSongs" | "settings" 
 type MenuItem = { id: string; label: string; accessibleLabel?: string; submenu?: boolean; trackIndex?: number; artist?: string };
 const artists = [...new Set(musicTracks.map(track => track.artist))].sort();
 const headings: Record<View, string> = { main: "iPod", music: "Music", songs: "All Songs", artists: "Artists", artistSongs: "", settings: "Settings", volume: "Volume", playing: "Now Playing" };
+
+function isThemeControl(target: EventTarget | null) {
+  return target instanceof Element && Boolean(target.closest("[data-theme-toggle]"));
+}
 
 function timestamp(seconds: number) {
   return `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
@@ -27,7 +31,7 @@ export function MusicPlayer() {
   const [booted, setBooted] = useState(false);
   const [backlight, setBacklight] = useState(true);
   const [lcdFilter, setLcdFilter] = useState(true);
-  const [artwork, setArtwork] = useState(false);
+  const [artwork, setArtwork] = useState(true);
   const [activity, setActivity] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -50,7 +54,7 @@ export function MusicPlayer() {
     const audio = audioRef.current;
     if (audio?.getAttribute("src") && audio.preload === "none") { audio.preload = "metadata"; audio.load(); }
     panelRef.current?.focus({ preventScroll: true });
-    const dismiss = (event: globalThis.PointerEvent) => { if (!rootRef.current?.contains(event.target as Node)) setOpen(false); };
+    const dismiss = (event: globalThis.PointerEvent) => { if (!rootRef.current?.contains(event.target as Node) && !isThemeControl(event.target)) setOpen(false); };
     document.addEventListener("pointerdown", dismiss);
     return () => document.removeEventListener("pointerdown", dismiss);
   }, [open, audioRef]);
@@ -97,6 +101,7 @@ export function MusicPlayer() {
 
   function playSelection(next: number) {
     playback.selectTrack(next);
+    setArtwork(true);
     setView("playing");
     centerRef.current?.focus({ preventScroll: true });
   }
@@ -218,8 +223,8 @@ export function MusicPlayer() {
       if (view === "playing" && ["ArrowLeft", "ArrowRight"].includes(event.key)) playback.skip(event.key === "ArrowLeft" ? -1 : 1);
       else if (view === "playing") stepWheel(event.key === "ArrowUp" ? 1 : -1);
       else stepWheel(["ArrowDown", "ArrowRight"].includes(event.key) ? 1 : -1);
-    } else if (event.target === wheelRef.current && event.key === "Enter") { event.preventDefault(); centerPress(); }
-    else if (event.target === wheelRef.current && event.key === " ") { event.preventDefault(); setView("playing"); playback.togglePlayback(); }
+    } else if ((event.target === wheelRef.current || event.target === panelRef.current) && event.key === "Enter") { event.preventDefault(); centerPress(); }
+    else if ((event.target === wheelRef.current || event.target === panelRef.current) && event.key === " ") { event.preventDefault(); setView("playing"); playback.togglePlayback(); }
   }
 
   const selectedItem = items[selected];
@@ -229,11 +234,11 @@ export function MusicPlayer() {
   const status = !track.audioSrc ? "Audio coming soon" : error ? "Couldn't play. Press play to retry." : loading ? "Loading..." : playing ? "Playing" : "Paused";
 
   return (
-    <div className={styles.root} ref={rootRef} onKeyDown={onKeyDown} onPointerDownCapture={wake} onBlur={event => { if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}>
+    <div className={styles.root} ref={rootRef} onKeyDown={onKeyDown} onPointerDownCapture={wake} onBlur={event => { if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget) && !isThemeControl(event.relatedTarget)) setOpen(false); }}>
       <button type="button" ref={triggerRef} className={styles.trigger} aria-label={playing ? `Music player: playing ${track.title}` : "Open music player"} aria-expanded={open} aria-controls={id} aria-haspopup="dialog" title="A little background music" data-playing={playing} onClick={() => { wake(); setOpen(!open); }}>
-        {playing ? <span className={styles.equalizer} aria-hidden="true"><i /><i /><i /><i /></span> : <Music2 size={17} strokeWidth={1.6} aria-hidden="true" />}
+        <Headphones size={19} strokeWidth={1.5} aria-hidden="true" />
       </button>
-      <div ref={panelRef} tabIndex={-1} className={styles.panel} id={id} role="dialog" aria-label="Music player" hidden={!open} data-backlight={backlight} data-lcd-filter={lcdFilter} data-booted={booted} data-view={view}>
+      <div ref={panelRef} tabIndex={-1} className={styles.panel} id={id} role="dialog" aria-label="Music player" hidden={!open} data-backlight={backlight} data-lcd-filter={lcdFilter} data-booted={booted} data-view={view} data-lenis-prevent>
         <div className={styles.screen}>
           {!booted && <div className={styles.bootScreen} role="status"><Music2 size={28} strokeWidth={1.5} aria-hidden="true" /><span>{profile.preferredName}&apos;s iPod</span></div>}
           <div className={styles.screenContent} inert={!booted} aria-hidden={!booted}>
