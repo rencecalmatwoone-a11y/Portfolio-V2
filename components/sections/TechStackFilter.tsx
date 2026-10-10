@@ -37,7 +37,7 @@ export function TechStackFilter() {
                   alt=""
                   width={16}
                   height={16}
-                  className={`${styles.icon} ${["Next.js", "GitHub", "Vercel", "Codex"].includes(item) ? styles.adaptiveIcon : ""}`}
+                  className={`${styles.icon} ${["Next.js", "GitHub", "Vercel", "Codex", "GitHub Copilot", "OpenCode"].includes(item) ? styles.adaptiveIcon : ""}`}
                 />
               ) : null}
               <span>{item}</span>

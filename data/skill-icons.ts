@@ -12,4 +12,6 @@ export const skillIcons: Readonly<Record<string, string>> = {
   Vercel: "/images/tools/vercel.svg",
   "VS Code": "/images/tools/vscode.svg",
   Codex: "/images/tools/codex.svg",
+  "GitHub Copilot": "/images/tools/github-copilot.svg",
+  OpenCode: "/images/tools/opencode.svg",
 };
