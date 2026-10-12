@@ -115,7 +115,7 @@ body {
   margin: 0;
   background: var(--color-background);
   color: var(--color-text);
-  font-family: var(--font-geist), Arial, Helvetica, sans-serif;
+  font-family: var(--font-plus-jakarta-sans), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
