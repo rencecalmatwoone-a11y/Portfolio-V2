@@ -31,14 +31,12 @@ export function MoreProjects({ projects }: { projects: readonly Project[] }) {
     cancelClose();
     const bounds = element.getBoundingClientRect();
     const width = Math.min(320, window.innerWidth - 32);
-    const height = width * 9 / 16 + 78;
-    const above = bounds.top >= height + 16 || bounds.top > window.innerHeight - bounds.bottom;
     setPreview({
       project,
       width,
       left: Math.max(16, Math.min(bounds.left, window.innerWidth - width - 16)),
-      top: above ? bounds.top : bounds.bottom,
-      above,
+      top: bounds.top,
+      above: true,
     });
   }
 

@@ -4,44 +4,6 @@ import type { Project } from "@/types/project";
 // Keep absent roles, dates, repositories, and outcomes unset.
 export const projects: readonly Project[] = [
   {
-    slug: "ratioflow",
-    title: "RatioFlow",
-    description:
-      "A privacy-first image utility. Adjust aspect ratios, preview changes, and export images directly in your browser.",
-    category: "Image utility",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Canvas API"],
-    featured: true,
-    order: 1,
-    liveUrl: "https://ratioflow-umber.vercel.app/",
-    status: "Live",
-    overview: [
-      "RatioFlow is an image aspect-ratio converter for resizing an image, previewing the framing, and exporting the result. Ratio changes happen directly in the browser, so files stay on the user's device.",
-    ],
-    visuals: [
-      {
-        src: "/images/projects/ratioflow-upload.webp",
-        alt: "RatioFlow's opening screen with a drag-and-drop area and Choose Image button for PNG, JPG, and WebP files.",
-        caption: "A simple starting point: choose an image",
-        width: 1440,
-        height: 1000,
-      },
-    ],
-    reflection:
-      "Keeping the image workflow in the browser is central to RatioFlow's privacy-first approach. Adjustments, previews, and exports happen locally, without sending the original file to a server.",
-    highlights: [
-      "Real-time aspect-ratio adjustments",
-      "Instant image previews",
-      "Browser-based image export",
-      "Local processing with no server uploads",
-    ],
-    image: {
-      src: "/images/projects/ratioflow.webp",
-      alt: "RatioFlow workspace showing an image preview, aspect-ratio presets, and resize controls.",
-      width: 1440,
-      height: 810,
-    },
-  },
-  {
     slug: "tutoyhub",
     title: "Collecthieves (TuToy Hub)",
     description:
@@ -50,7 +12,7 @@ export const projects: readonly Project[] = [
     role: "UI/UX Design · Project Management",
     technologies: ["Figma", "React", "TypeScript", "Tailwind CSS", "Wireframing"],
     featured: true,
-    order: 2,
+    order: 1,
     liveUrl: "https://tutoyhub.shop/",
     status: "Live",
     overview: [
@@ -81,6 +43,64 @@ export const projects: readonly Project[] = [
     },
   },
   {
+    slug: "my-island-surprises",
+    title: "My Island Surprises",
+    description:
+      "I redesigned pages of my client's website to improve its overall visual appeal, layout, usability, and user experience while maintaining the brand's original identity and design direction.",
+    category: "Wellness website",
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
+    featured: true,
+    order: 2,
+    status: "NDA",
+    overview: [
+      "My Island Surprises is a website focused on spiritual growth and holistic well-being. I'm redesigning some pages with Next.js, bringing its design and experience up to date.",
+    ],
+    image: {
+      src: "/images/projects/Island Website Redesign Comparison.png",
+      alt: "Side-by-side comparison of the original and redesigned My Island Surprises homepage.",
+      width: 1672,
+      height: 941,
+    },
+  },
+  {
+    slug: "ratioflow",
+    title: "RatioFlow",
+    description:
+      "A privacy-first image utility. Adjust aspect ratios, preview changes, and export images directly in your browser.",
+    category: "Image utility",
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Canvas API"],
+    featured: true,
+    order: 3,
+    liveUrl: "https://ratioflow-umber.vercel.app/",
+    status: "Live",
+    overview: [
+      "RatioFlow is an image aspect-ratio converter for resizing an image, previewing the framing, and exporting the result. Ratio changes happen directly in the browser, so files stay on the user's device.",
+    ],
+    visuals: [
+      {
+        src: "/images/projects/ratioflow-upload.webp",
+        alt: "RatioFlow's opening screen with a drag-and-drop area and Choose Image button for PNG, JPG, and WebP files.",
+        caption: "A simple starting point: choose an image",
+        width: 1440,
+        height: 1000,
+      },
+    ],
+    reflection:
+      "Keeping the image workflow in the browser is central to RatioFlow's privacy-first approach. Adjustments, previews, and exports happen locally, without sending the original file to a server.",
+    highlights: [
+      "Real-time aspect-ratio adjustments",
+      "Instant image previews",
+      "Browser-based image export",
+      "Local processing with no server uploads",
+    ],
+    image: {
+      src: "/images/projects/ratioflow.webp",
+      alt: "RatioFlow workspace showing an image preview, aspect-ratio presets, and resize controls.",
+      width: 1440,
+      height: 810,
+    },
+  },
+  {
     slug: "musync",
     title: "MUSYNC",
     description:
@@ -88,7 +108,7 @@ export const projects: readonly Project[] = [
     category: "Music game",
     technologies: ["React", "Node.js", "Supabase", "Spotify API", "Deezer API", "Vercel"],
     featured: true,
-    order: 3,
+    order: 4,
     liveUrl: "https://musyncsongguessinggame.vercel.app/",
     status: "Live",
     overview: [
@@ -116,26 +136,6 @@ export const projects: readonly Project[] = [
       alt: "MUSYNC song guessing interface with music filters, playback controls, and score tracking.",
       width: 1440,
       height: 810,
-    },
-  },
-  {
-    slug: "my-island-surprises",
-    title: "My Island Surprises",
-    description:
-      "I redesigned pages of my client's website to improve its overall visual appeal, layout, usability, and user experience while maintaining the brand's original identity and design direction.",
-    category: "Wellness website",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
-    featured: true,
-    order: 4,
-    status: "NDA",
-    overview: [
-      "My Island Surprises is a website focused on spiritual growth and holistic well-being. I'm redesigning some pages with Next.js, bringing its design and experience up to date.",
-    ],
-    image: {
-      src: "/images/projects/Island Website Redesign Comparison.png",
-      alt: "Side-by-side comparison of the original and redesigned My Island Surprises homepage.",
-      width: 1672,
-      height: 941,
     },
   },
 ];
