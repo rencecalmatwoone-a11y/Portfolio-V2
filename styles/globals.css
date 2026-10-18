@@ -209,7 +209,7 @@ main {
 }
 
 .page-section::before { inset-block-start: 0; }
-.hero-guideline::before { inset-block-start: calc(var(--hero-content-start) - 1rem + 4px); }
+.hero-guideline::before { inset-block-start: var(--hero-pattern-height); }
 .section-heading::after { inset-block-end: 0; }
 
 h1 {

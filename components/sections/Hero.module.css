@@ -1,14 +1,16 @@
 .hero {
   position: relative;
   --hero-content-start: clamp(4.5rem, 10vw, 8.5rem);
-  padding-block: var(--hero-content-start);
+  --hero-pattern-height: calc(var(--hero-content-start) - 1rem + 4px);
+  --hero-content-gap: clamp(2rem, 5vw, 4rem);
+  padding-block: calc(var(--hero-pattern-height) + var(--hero-content-gap)) var(--hero-content-gap);
 }
 
 .pattern {
   position: absolute;
   inset-block-start: 0;
   inset-inline: calc(0px - var(--page-inset));
-  height: calc(var(--hero-content-start) - 1rem + 4px);
+  height: var(--hero-pattern-height);
   background-color: var(--color-background);
   pointer-events: none;
 }

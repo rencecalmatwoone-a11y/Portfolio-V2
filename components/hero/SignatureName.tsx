@@ -3,46 +3,32 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "@/components/sections/Hero.module.css";
 
-type SignatureState = "idle" | "writing" | "complete" | "exiting";
-
-const signatureHold = 220;
+type SignatureState = "idle" | "writing" | "complete";
 
 export function SignatureName({ name }: { name: string }) {
   const [state, setState] = useState<SignatureState>("idle");
   const hovered = useRef(false);
-  const focused = useRef(false);
-  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     function finishForReducedMotion() {
       if (!motion.matches) return;
-      setState((current) => current === "exiting" ? "idle" : current === "writing" ? "complete" : current);
-      if (!hovered.current && !focused.current) {
-        if (resetTimer.current) clearTimeout(resetTimer.current);
-        resetTimer.current = setTimeout(() => setState("idle"), signatureHold);
-      }
+      setState((current) => current === "writing" ? "complete" : current);
     }
     motion.addEventListener("change", finishForReducedMotion);
     return () => {
       motion.removeEventListener("change", finishForReducedMotion);
-      if (resetTimer.current) clearTimeout(resetTimer.current);
     };
   }, []);
 
   function startWriting() {
-    if (resetTimer.current) clearTimeout(resetTimer.current);
     if (state === "writing") return;
     setState(window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "complete" : "writing");
   }
 
   function restoreName() {
-    if (hovered.current || focused.current) return;
-    if (resetTimer.current) clearTimeout(resetTimer.current);
-    // Keep the finished ink visible briefly after a short hover or tap.
-    resetTimer.current = setTimeout(() => {
-      setState(window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "idle" : "exiting");
-    }, signatureHold);
+    hovered.current = false;
+    setState("idle");
   }
 
   return (
@@ -57,19 +43,8 @@ export function SignatureName({ name }: { name: string }) {
           hovered.current = true;
           startWriting();
         }}
-        onPointerLeave={() => {
-          hovered.current = false;
-          if (state === "complete") restoreName();
-        }}
-        onFocus={() => {
-          focused.current = true;
-          startWriting();
-        }}
-        onBlur={() => {
-          focused.current = false;
-          if (state === "complete") restoreName();
-        }}
-        onClick={startWriting}
+        onPointerLeave={restoreName}
+        onPointerCancel={restoreName}
       >
         <span className={styles.nameText} aria-hidden="true">{name}</span>
         <svg
@@ -77,9 +52,6 @@ export function SignatureName({ name }: { name: string }) {
           viewBox="231 9 233 177"
           aria-hidden="true"
           focusable="false"
-          onAnimationEnd={(event) => {
-            if (event.target === event.currentTarget) setState("idle");
-          }}
         >
           {/* Draw the ink itself so crossing strokes cannot appear ahead of the pen. */}
           <path
@@ -106,8 +78,7 @@ export function SignatureName({ name }: { name: string }) {
             strokeLinecap="round"
             strokeLinejoin="round"
             onAnimationEnd={() => {
-              setState("complete");
-              restoreName();
+              if (hovered.current) setState("complete");
             }}
           />
         </svg>
