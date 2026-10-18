@@ -126,4 +126,17 @@ export const certifications: Certification[] = [
     credentialUrl: "https://www.coursera.org/account/accomplishments/verify/38CLSQF1TA7H",
     status: "completed",
   },
+  {
+    id: "sololearn-web-development",
+    title: "Web Development",
+    date: "May 2024",
+    issuer: "Sololearn",
+    issuerLogo: "/images/certifications/sololearn-logo.png",
+    category: "Web development",
+    kind: "Course certificate",
+    description: "Completed the course by demonstrating theoretical and practical understanding of web development.",
+    credentialId: "CC-0T1JX9HO",
+    credentialUrl: "https://www.sololearn.com/en/certificates/CC-0T1JX9HO",
+    status: "completed",
+  },
 ];

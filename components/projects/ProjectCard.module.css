@@ -125,6 +125,7 @@ a.link:focus-visible {
 
 .footer {
   display: flex;
+  margin-top: auto;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
