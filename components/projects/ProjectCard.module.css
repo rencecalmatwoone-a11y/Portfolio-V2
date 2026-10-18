@@ -116,7 +116,7 @@ a.link:focus-visible {
 }
 
 .description {
-  margin: var(--space-1) 0 var(--space-4);
+  margin: var(--space-3) 0 var(--space-4);
   font-family: var(--font-description);
   color: var(--color-muted);
   font-size: 0.8125rem;
