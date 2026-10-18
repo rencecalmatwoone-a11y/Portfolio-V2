@@ -3,17 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "@/components/sections/Hero.module.css";
 
-type SignatureState = "idle" | "writing" | "complete";
+type SignatureState = "idle" | "writing" | "complete" | "exiting";
 
 export function SignatureName({ name }: { name: string }) {
   const [state, setState] = useState<SignatureState>("idle");
   const hovered = useRef(false);
+  const stroke = useRef<SVGPathElement>(null);
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     function finishForReducedMotion() {
       if (!motion.matches) return;
-      setState((current) => current === "writing" ? "complete" : current);
+      setState((current) => current === "writing" ? "complete" : current === "exiting" ? "idle" : current);
     }
     motion.addEventListener("change", finishForReducedMotion);
     return () => {
@@ -28,7 +29,11 @@ export function SignatureName({ name }: { name: string }) {
 
   function restoreName() {
     hovered.current = false;
-    setState("idle");
+    if (stroke.current) {
+      // Freeze the current pen position while the ink fades away.
+      stroke.current.style.setProperty("--signature-exit-offset", getComputedStyle(stroke.current).strokeDashoffset);
+    }
+    setState(window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "idle" : "exiting");
   }
 
   return (
@@ -52,9 +57,15 @@ export function SignatureName({ name }: { name: string }) {
           viewBox="231 9 233 177"
           aria-hidden="true"
           focusable="false"
+          onTransitionEnd={(event) => {
+            if (event.target === event.currentTarget && event.propertyName === "opacity" && !hovered.current) {
+              setState("idle");
+            }
+          }}
         >
           {/* Draw the ink itself so crossing strokes cannot appear ahead of the pen. */}
           <path
+            ref={stroke}
             className={styles.signatureWritingStroke}
             d="M245 154
               C273 149 308 125 335 103
