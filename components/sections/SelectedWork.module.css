@@ -25,7 +25,7 @@
   display: flex;
   width: calc(100% + var(--page-inset) + var(--page-inset));
   justify-content: center;
-  margin-top: var(--space-12);
+  margin-top: var(--page-inset);
   margin-bottom: calc(0px - var(--space-12));
   margin-inline-start: calc(0px - var(--page-inset));
   padding-block-start: var(--space-8);
@@ -62,19 +62,27 @@
   .grid::before {
     content: "";
     position: absolute;
-    inset-block: calc(-1 * var(--page-inset)) calc(-1 * var(--space-12));
+    inset-block: calc(-1 * var(--page-inset));
     left: 50%;
     border-left: 1px dotted var(--color-grid);
     pointer-events: none;
   }
 
-  .grid::after {
+  .grid > article {
+    position: relative;
+  }
+
+  .grid > article:nth-child(n + 3)::before {
     content: "";
     position: absolute;
-    top: 50%;
+    top: calc(-1 * var(--space-12) / 2);
     right: 0;
     left: 0;
     border-top: 1px dotted var(--color-grid);
     pointer-events: none;
+  }
+
+  .grid > article:nth-child(2n + 3)::before {
+    right: calc(-1 * var(--space-8));
   }
 }
