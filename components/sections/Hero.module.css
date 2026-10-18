@@ -1,7 +1,7 @@
 .hero {
   position: relative;
   --hero-content-start: clamp(4.5rem, 10vw, 8.5rem);
-  padding-block: var(--hero-content-start) clamp(4.75rem, calc(8vw + 0.75rem), 7.75rem);
+  padding-block: var(--hero-content-start);
 }
 
 .pattern {

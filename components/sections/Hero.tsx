@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { hero } from "@/data/hero";
 import { SocialLinks } from "@/components/hero/SocialLinks";
-import { WalkingFigure } from "@/components/hero/WalkingFigure";
 import { SignatureName } from "@/components/hero/SignatureName";
 import { MusicPlayer } from "@/components/hero/MusicPlayer";
 import { DotGridPattern } from "@/components/background-pattern/dot-grid-pattern";
@@ -85,7 +84,7 @@ export function Hero() {
         <SocialLinks className={`${styles.socials} ${styles.enter}`} />
       </div>
       <DotGridPattern className={styles.pattern} aria-hidden="true" />
-      <WalkingFigure />
+      {/* WalkingFigure and its chat bubble are temporarily unmounted; keep the component/assets for future use. */}
     </section>
   );
 }
