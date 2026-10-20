@@ -2,7 +2,6 @@ import Image from "next/image";
 import { hero } from "@/data/hero";
 import { SocialLinks } from "@/components/hero/SocialLinks";
 import { SignatureName } from "@/components/hero/SignatureName";
-import { MusicPlayer } from "@/components/hero/MusicPlayer";
 import { DotGridPattern } from "@/components/background-pattern/dot-grid-pattern";
 import { RoleSwitcher } from "@/components/sections/RoleSwitcher";
 import styles from "./Hero.module.css";
@@ -39,7 +38,7 @@ function ToolMarks({ tools }: { tools: readonly string[] }) {
 export function Hero() {
   return (
     <section className={`${styles.hero} hero-guideline`} aria-labelledby="hero-heading">
-      <MusicPlayer />
+      {/* MusicPlayer is temporarily unmounted; keep its component/assets for future use. */}
       <div className={styles.content}>
         <h1 id="hero-heading" className={`${styles.introduction} ${styles.enter}`}>
           <span>{hero.greeting}</span>{" "}

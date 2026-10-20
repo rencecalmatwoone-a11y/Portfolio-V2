@@ -6,7 +6,6 @@ import styles from "./ClosingQuote.module.css";
 import { DotGridPattern } from "@/components/background-pattern/dot-grid-pattern";
 import { TextReveal } from "@/components/ui/TextReveal";
 import { CinematicBanner } from "./CinematicBanner";
-import { WalkingFigure } from "@/components/hero/WalkingFigure";
 
 const quote = "Negative things are just a part of positive outcomes";
 
@@ -36,7 +35,7 @@ export function ClosingQuote() {
 					</div>
 					<cite className={styles.attribution}>A quote of mine</cite>
 				</blockquote>
-				<WalkingFigure variant="gif" />
+				{/* Fighting GIF is temporarily unmounted; keep WalkingFigure and its assets for future use. */}
 			</div>
 			<CinematicBanner />
 			<DotGridPattern className={styles.pattern} aria-hidden="true" />
